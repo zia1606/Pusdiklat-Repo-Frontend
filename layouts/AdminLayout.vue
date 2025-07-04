@@ -1,48 +1,32 @@
 <template>
-    <div class="flex h-screen bg-gray-50 overflow-hidden">
-      <!-- Sidebar -->
-      <Sidebar :show="showSidebar" @close="showSidebar = false" />
-  
-      <!-- Main Content -->
-      <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- Header -->
-        <HeaderAdmin 
-          :pageTitle="pageTitle" 
-          @toggle-sidebar="toggleSidebar" 
-        />
-  
-        <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto pt-16">
-          <div class="p-6">
-            <slot />
-          </div>
-        </main>
+  <div v-if="authStore.isInitialized">
+    <div v-if="authStore.isAuthenticated && authStore.isAdmin" class="flex h-screen bg-gray-50 overflow-hidden">
+      <!-- Konten admin -->
+    </div>
+    <div v-else>
+      <!-- Redirect dengan loading state -->
+      <div class="flex items-center justify-center h-screen bg-gray-50">
+        <div class="text-center">
+          <p class="text-lg">Mengarahkan ke halaman login...</p>
+        </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
+
+<script setup>
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+
+const authStore = useUnifiedAuthStore()
+
+onMounted(async () => {
+  await authStore.initializeAuth()
   
-  <script setup>
-  import { ref } from 'vue';
-  import Sidebar from '@/components/Admin/Sidebar.vue';
-  import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue';
-  
-  // const showSidebar = ref(true);
-  const props = defineProps({
-    pageTitle: {
-      type: String,
-      default: 'Dashboard'
-    }
-  });
-  
-  // const toggleSidebar = () => {
-  //   showSidebar.value = !showSidebar.value;
-  // };
-  
-  // Di parent component (Layout Admin)
-  const showSidebar = ref(false);
-  
-  const toggleSidebar = () => {
-    showSidebar.value = !showSidebar.value;
-  };
-  
-  </script>
+  if (!authStore.isAuthenticated || !authStore.isAdmin) {
+    // Tambahkan delay kecil untuk memastikan CSS terload
+    setTimeout(() => {
+      navigateTo('/auth/login')
+    }, 100)
+  }
+})
+</script>

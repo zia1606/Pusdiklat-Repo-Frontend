@@ -1,15 +1,11 @@
-import { defineNuxtRouteMiddleware } from "#app"
-import { useAuthStore } from "~/stores/auth"
-import { navigateTo } from "#app"
+// middleware/auth.js
+export default defineNuxtRouteMiddleware(async (to) => {
+  if (process.server) return
+  
+  const authStore = useUnifiedAuthStore()
+  await authStore.initializeAuth()
 
-export default defineNuxtRouteMiddleware((to, from) => {
-  const authStore = useAuthStore()
-
-  // Initialize auth store
-  authStore.init()
-
-  // Check if user is logged in
-  if (!authStore.isLoggedIn) {
-    return navigateTo("/auth/login")
+  if (!authStore.isAuthenticated && to.path !== '/auth/login') {
+    return navigateTo('/auth/login')
   }
 })

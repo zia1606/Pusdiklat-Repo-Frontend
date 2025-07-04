@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-900 to-blue-800">
-    <div class="bg-white p-8 rounded-xl shadow-md w-96 px-4 sm:px-8">
+    <div class="bg-white p-8 rounded-xl shadow-md w-md px-4 sm:px-8">
       <div class="flex justify-center">
         <img src="/img/logo.png" alt="Logo" class="w-12 h-auto"/>
       </div>
@@ -9,11 +9,13 @@
       
       <!-- Masuk dengan google -->
       <button 
-        @click="loginWithGoogle"
-        class="w-full bg-white shadow text-gray-700 border border-gray-300 cursor-pointer rounded-lg text-sm font-medium py-2 hover:bg-gray-200 transition flex items-center justify-center">
-        <Google />
-        <span>Masuk dengan Google</span>
-      </button>
+    @click="loginWithGoogle"
+    :disabled="googleLoading"
+    class="w-full bg-white shadow text-gray-700 border border-gray-300 cursor-pointer rounded-lg text-sm font-medium py-2 hover:bg-gray-200 transition flex items-center justify-center disabled:opacity-50">
+    <Google />
+    <span v-if="googleLoading">Memproses...</span>
+    <span v-else>Masuk dengan Google</span>
+  </button>
       
       <div class="flex w-full items-center gap-2 py-4 text-sm text-slate-600">
         <div class="h-px w-full bg-slate-400"></div>
@@ -30,9 +32,11 @@
             v-model="form.email"
             type="email"
             class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring focus:ring-gray-200"
+            :class="errors.email ? 'border-red-500' : 'border-gray-300'"
             placeholder="Masukkan email anda"
             required
           />
+          <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
         </div>
         
         <!-- Password -->
@@ -51,9 +55,11 @@
             v-model="form.password"
             type="password"
             class="w-full border border-gray-300 p-2 rounded-lg focus:outline-none focus:ring focus:ring-gray-200"
+            :class="errors.password ? 'border-red-500' : 'border-gray-300'"
             placeholder="Masukkan password anda"
             required
           />
+          <p v-if="errors.password" class="mt-1 text-sm text-red-600">{{ errors.password }}</p>
         </div>
         
         <!-- Error Message -->
@@ -89,106 +95,98 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '~/stores/auth'
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+import { $fetch } from 'ofetch'
+
+useHead({
+  title: 'Login - Sistem Repositori Pusdiklat BPS'
+})
 
 const router = useRouter()
 const route = useRoute()
 const loading = ref(false)
+const googleLoading = ref(false) // Tambahkan state untuk loading Google
 const errorMessage = ref('')
 const successMessage = ref('')
-const authStore = useAuthStore()
+const authStore = useUnifiedAuthStore()
 
 const form = ref({
   email: '',
   password: ''
 })
 
+const errors = ref({
+  email: '',
+  password: '',
+  general: ''
+})
+
+const resetErrors = () => {
+  errors.value = {
+    email: '',
+    password: '',
+    general: ''
+  }
+  errorMessage.value = ''
+}
+
 // Handle Google Login
+// Di login.vue
 const loginWithGoogle = () => {
+  googleLoading.value = true
   if (process.client) {
     const redirectUri = encodeURIComponent(window.location.origin + '/auth/callback')
     window.location.href = `http://127.0.0.1:8000/api/auth/google/redirect?redirect_uri=${redirectUri}`
   }
 }
 
-// Handle manual login
-const handleLogin = async () => {
-  loading.value = true
-  errorMessage.value = ''
-  successMessage.value = ''
-  
-  console.log('=== DEBUG LOGIN ===')
-  console.log('Form data:', form.value)
-  
-  try {
-    // Gunakan $fetch untuk API call
-    const response = await $fetch('http://127.0.0.1:8000/api/login', {
-      method: 'POST',
-      body: JSON.stringify(form.value),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    })
-    
-    console.log('Login response:', response)
-    
-    if (response.status) {
-      successMessage.value = response.message
+onMounted(() => {
+  if (process.client && route.query.token && route.query.user) {
+    try {
+      const userData = JSON.parse(decodeURIComponent(route.query.user))
       
-      // Ekstrak data user dan token dari response
-      const userData = {
-        id: response.data.id,
-        name: response.data.name,
-        email: response.data.email,
-        avatar: response.data.avatar,
-        role_id: response.data.role_id,
-        // Tambahkan field lain yang diperlukan
-      }
-      
-      // Set auth data ke store
       authStore.setAuth({
-        token: response.data.token,
-        user: userData
+        token: route.query.token,
+        user: userData,
+        role: userData.role.name.toLowerCase()
       })
       
-      // Redirect berdasarkan role
-      // role_id: 1 = admin, 2 = user (sesuaikan dengan database Anda)
-      if (response.data.role_id === 1) {
-        setTimeout(() => {
-          router.push('/admin/dashboard')
-        }, 1000)
+      const redirectPath = authStore.isAdmin ? '/admin/dashboard' : '/'
+      navigateTo(redirectPath)
+    } catch (error) {
+      console.error('Error parsing Google auth data:', error)
+      errorMessage.value = 'Terjadi kesalahan saat login dengan Google'
+    } finally {
+      googleLoading.value = false
+    }
+  }
+})
+
+// Handle manual login
+// Di script setup login.vue
+const handleLogin = async () => {
+  try {
+    const response = await $fetch('http://127.0.0.1:8000/api/login', {
+      method: 'POST',
+      body: form.value
+    })
+    
+    if (response.status) {
+      authStore.setAuth({
+        token: response.data.token,
+        user: response.data.user,
+        role: response.data.user.role.name.toLowerCase()
+      })
+      
+      // Redirect admin ke dashboard, tapi biarkan mereka bisa akses halaman user
+      if (authStore.isAdmin) {
+        await navigateTo('/admin/dashboard')
       } else {
-        setTimeout(() => {
-          router.push('/')
-        }, 1000)
+        await navigateTo('/')
       }
-    } else {
-      errorMessage.value = response.message || 'Login gagal'
     }
   } catch (error) {
-    console.error('Login error:', error)
-    
-    // Handle different types of errors
-    if (error.status === 404) {
-      errorMessage.value = 'Email tidak ditemukan'
-    } else if (error.status === 400) {
-      // Handle validation errors
-      if (error.data?.message) {
-        errorMessage.value = error.data.message
-      } else if (error.data?.errors) {
-        const errors = Object.values(error.data.errors).flat()
-        errorMessage.value = errors.join(', ')
-      } else {
-        errorMessage.value = 'Data yang dikirim tidak valid'
-      }
-    } else if (error.status === 401) {
-      errorMessage.value = 'Email atau password salah'
-    } else {
-      errorMessage.value = error.data?.message || 'Terjadi kesalahan pada server. Silakan coba lagi.'
-    }
-  } finally {
-    loading.value = false
+    // Handle error
   }
 }
 
@@ -200,11 +198,18 @@ onMounted(() => {
       
       const authData = {
         token: route.query.token,
-        user: userData
+        user: userData,
+        role: userData.role_id === 1 ? 'admin' : 'user'
       }
       
       authStore.setAuth(authData)
-      router.push('/')
+      
+      // Redirect berdasarkan role
+      if (userData.role_id === 1) {
+        router.push('/admin/dashboard')
+      } else {
+        router.push('/')
+      }
     } catch (error) {
       console.error('Error parsing Google auth data:', error)
       errorMessage.value = 'Terjadi kesalahan saat login dengan Google'

@@ -40,8 +40,9 @@
   
           <!-- Daftar Favorit -->
           <div v-else class="space-y-4">
+            <!-- Display only visible items -->
             <div 
-              v-for="item in favorit" 
+              v-for="item in visibleItems" 
               :key="item.id" 
               class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200 relative"
             >
@@ -65,15 +66,6 @@
                   <span class="text-xs text-gray-500">
                     Ditambahkan pada: {{ formatDate(item.created_at) }}
                   </span>
-                  <!-- <button 
-                    @click="removeFromFavorit(item.id)"
-                    class="text-gray-400 hover:text-red-500"
-                    title="Hapus dari favorit"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button> -->
                 </div>
 
                 <!-- Title and Author -->
@@ -140,14 +132,12 @@
                   <div class="flex items-center space-x-2">
                     <!-- Favorit Button -->
                     <button 
-                      @click="confirmToggleFavorite(item.koleksi.id)"
+                      @click="showDeleteConfirmation(item.koleksi.id)"
                       class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                       <svg 
                         xmlns="http://www.w3.org/2000/svg" 
-                        class="h-4 w-4 mr-1" 
-                        fill="none"
-                        :class="{ 'text-yellow-500 fill-yellow-500': isFavorite(item.koleksi.id), 'text-gray-400': !isFavorite(item.koleksi.id) }" 
+                        class="h-4 w-4 mr-1 text-yellow-500 fill-yellow-500" 
                         viewBox="0 0 24 24" 
                         stroke="currentColor"
                       >
@@ -190,10 +180,32 @@
               </div>
             </div>
 
+<!-- Load More/Show Less Links -->
+<div class="text-center">
+  <div v-if="hasMoreItems">
+    <a 
+      href="#" 
+      @click.prevent="loadMore"
+      class="text-sm text-gray-500 hover:text-gray-700 hover:underline transition-colors"
+    >
+      Muat Lebih Banyak
+    </a>
+  </div>
+  <div v-else-if="visibleItemCount > itemsPerPage">
+    <a 
+      href="#" 
+      @click.prevent="showLess"
+      class="text-sm text-gray-500 hover:text-gray-700 hover:underline transition-colors"
+    >
+      Tampilkan Lebih Sedikit
+    </a>
+  </div>
+</div>
+
             <!-- Clear All Button -->
             <div class="pt-4">
               <button
-                @click="clearAllFavorit"
+                @click="confirmClearAll"
                 class="w-full py-2.5 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 transition-colors"
               >
                 Hapus Semua Favorit
@@ -309,6 +321,87 @@
   </div>
 </div>
       </NuxtLayout>
+
+      <!-- Delete Confirmation Modal -->
+<div v-if="showDeleteModal" class="fixed inset-0 overflow-y-auto z-50">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelDelete"></div>
+    </div>
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus dari favorit</h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus koleksi ini dari daftar favorit?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button 
+  @click="handleDeleteConfirm"
+  class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+>
+  Hapus
+</button>
+<button 
+  @click="handleDeleteCancel"
+  class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+>
+  Batal
+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Clear All Confirmation Modal -->
+<div v-if="showClearAllModal" class="fixed inset-0 overflow-y-auto z-50">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelClearAll"></div>
+    </div>
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus Semua Favorit</h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus semua koleksi favorit?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button 
+          @click="clearAllFavorit"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+        >
+          Hapus Semua
+        </button>
+        <button 
+          @click="cancelClearAll"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+        >
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
 </template>
   
@@ -317,9 +410,17 @@ import { ref, onMounted, watch } from 'vue';
 import { useAuthStore } from '~/stores/auth';
 import { useRouter } from 'vue-router';
 import axios from 'axios'; // Tambahkan import axios
+import { useToast } from '~/composables/useToast'
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 
-const authStore = useAuthStore();
+useHead({
+  title: 'Koleksi Favorit - Sistem Repositori Pusdiklat BPS'
+})
+
+const authStore = useUnifiedAuthStore()
+// const authStore = useAuthStore();
 const router = useRouter();
+const { showToast } = useToast()
 
 // State
 const favorit = ref([]);
@@ -329,6 +430,34 @@ const currentPage = ref(1);
 const perPage = 10;
 const totalItems = ref(0);
 const totalPages = ref(1);
+const itemsPerPage = ref(10); // Items to show per page
+const visibleItemCount = ref(10); // Initially show 10 items
+
+// Computed properties
+const visibleItems = computed(() => {
+  return favorit.value.slice(0, visibleItemCount.value);
+});
+
+const hasMoreItems = computed(() => {
+  return visibleItemCount.value < favorit.value.length;
+});
+
+// Show less items
+const showLess = () => {
+  visibleItemCount.value = itemsPerPage.value;
+  // Optional: scroll to top after showing less items
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
+
+// Load more items
+const loadMore = () => {
+  visibleItemCount.value += itemsPerPage.value;
+};
+
+
 
 // State untuk share modal (yang hilang sebelumnya)
 const showShareModal = ref(false);
@@ -345,117 +474,153 @@ const formatDate = (dateString) => {
 };
 
 // Ambil data favorit
+// Ambil data favorit
 const fetchFavorit = async () => {
-  if (!authStore.isLoggedIn) {
-    router.push('/auth/login');
-    return;
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
   }
 
-  isLoading.value = true;
-  error.value = null;
+  isLoading.value = true
+  error.value = null
 
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/favorit', {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
-      },
-      params: {
-        page: currentPage.value,
-        per_page: perPage
       }
-    });
+    })
 
     if (response.data.success) {
-      favorit.value = response.data.data;
-      totalItems.value = response.data.total || response.data.data.length;
-      totalPages.value = Math.ceil(totalItems.value / perPage);
-    } else {
-      error.value = 'Gagal memuat koleksi favorit';
+      favorit.value = response.data.data
+      // Reset visible items count when new data is loaded
+      visibleItemCount.value = itemsPerPage.value;
     }
   } catch (err) {
-    console.error('Error fetching favorites:', err);
-    error.value = 'Terjadi kesalahan saat memuat koleksi favorit';
-    
-    // Jika error 401 (unauthorized), logout user
     if (err.response?.status === 401) {
-      await authStore.logout();
-      router.push('/auth/login');
+      await authStore.logout()
+      await navigateTo('/auth/login')
     }
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 
-// Cek apakah koleksi sudah difavoritkan
+// Rest of your existing methods remain the same...
+// (toggleFavorite, confirmToggleFavorite, handleDeleteConfirm, handleDeleteCancel, 
+// showDeleteConfirmation, confirmDelete, cancelDelete, loadFavorites, removeFromFavorit,
+// openShareModal, closeShareModal, copyToClipboard, shareViaWhatsApp, shareViaTwitter,
+// shareViaFacebook, shareViaEmail, shareViaTelegram, confirmClearAll, clearAllFavorit,
+// cancelClearAll, handleSearch)
+
+// Watch untuk perubahan status login
+watch(() => authStore.isLoggedIn, async (loggedIn) => {
+  if (loggedIn) {
+    await loadFavorites();
+  } else {
+    // Reset favorites ketika logout
+    favorites.value = {};
+  }
+});
+
+
 const isFavorite = (koleksiId) => {
-  return favorites.value[koleksiId] || false;
+  // Di halaman favorit, semua item sudah favorit
+  return true;
 };
 
-// Fungsi untuk konfirmasi sebelum meng-unfavorit
-const confirmToggleFavorite = async (koleksiId) => {
-  if (isFavorite(koleksiId)) {
-    const confirmed = confirm('Apakah Anda yakin ingin menghapus koleksi ini dari favorit?');
-    if (!confirmed) return;
-  }
-  await toggleFavorite(koleksiId);
-};
-
-// Toggle status favorit
+// Modifikasi fungsi toggleFavorite untuk halaman favorit
 const toggleFavorite = async (koleksiId) => {
-  const { $toast } = useNuxtApp();
+  try {
+    // Langsung hapus karena ini adalah halaman favorit
+    await axios.delete(`http://localhost:8000/api/favorit/by-koleksi/${koleksiId}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    });
+    
+    // Hapus dari daftar tampilan
+    favorit.value = favorit.value.filter(item => item.koleksi.id !== koleksiId);
+    
+    showToast('success', 'Koleksi dihapus dari favorit');
+  } catch (error) {
+    console.error('Error removing favorite:', error);
+    if (error.response?.status === 401) {
+      await authStore.logout();
+      await navigateTo('/auth/login');
+    }
+    showToast('error', 'Gagal menghapus dari favorit');
+  }
+};
 
-  if (!authStore.isLoggedIn) {
-    $toast.warning('Silakan masuk terlebih dahulu untuk menambahkan ke favorit');
+
+const confirmToggleFavorite = async (koleksiId) => {
+  if (!authStore.isAuthenticated) {
+    showToast('warning', 'Silakan masuk terlebih dahulu untuk menambahkan ke favorit');
+    await navigateTo('/auth/login');
     return;
   }
 
-  try {
-    if (isFavorite(koleksiId)) {
-      await axios.delete(`http://localhost:8000/api/favorit/by-koleksi/${koleksiId}`, {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
-      });
-      favorites.value[koleksiId] = false;
-      $toast.success('Koleksi dihapus dari favorit');
-      // Refresh data favorit setelah menghapus
-      await fetchFavorit();
-    } else {
-      await axios.post('http://localhost:8000/api/favorit', {
-        koleksi_id: koleksiId
-      }, {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
-      });
-      favorites.value[koleksiId] = true;
-      $toast.success('Koleksi ditambahkan ke favorit');
-    }
-  } catch (error) {
-    console.error('Error toggling favorite:', error);
-    $toast.error('Gagal mengubah status favorit');
+  if (isFavorite(koleksiId)) {
+    showDeleteModal.value = true;
+    koleksiToDelete.value = koleksiId;
+  } else {
+    await toggleFavorite(koleksiId);
   }
 };
 
+// And add these handlers for the modal buttons
+const handleDeleteConfirm = async () => {
+  if (koleksiToDelete.value) {
+    await toggleFavorite(koleksiToDelete.value);
+    koleksiToDelete.value = null;
+    showDeleteModal.value = false;
+  }
+};
+
+const handleDeleteCancel = () => {
+  koleksiToDelete.value = null
+  showDeleteModal.value = false
+}
+
+
+// Add this to your script setup
+const showDeleteModal = ref(false)
+const koleksiToDelete = ref(null)
+
+const showDeleteConfirmation = (koleksiId) => {
+  koleksiToDelete.value = koleksiId;
+  showDeleteModal.value = true;
+};
+
+const confirmDelete = () => {
+  showDeleteModal.value = false
+  return true
+}
+
+const cancelDelete = () => {
+  showDeleteModal.value = false
+  return false
+}
+
 // Fungsi untuk memuat status favorit saat pertama kali load
 const loadFavorites = async () => {
-  if (!authStore.isLoggedIn) return;
+  if (!authStore.isAuthenticated) return;
 
   try {
     const response = await axios.get('http://localhost:8000/api/favorit', {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
+      headers: { Authorization: `Bearer ${authStore.token}` }
     });
 
     if (response.data.success) {
-      // Inisialisasi favorites
       response.data.data.forEach(item => {
         favorites.value[item.koleksi_id] = true;
       });
     }
   } catch (error) {
     console.error('Error loading favorites:', error);
+    if (error.response?.status === 401) {
+      await authStore.logout();
+      await navigateTo('/auth/login');
+    }
   }
 };
 
@@ -534,26 +699,41 @@ const shareViaTelegram = () => {
   window.open(url, '_blank');
 };
 
-// Hapus semua favorit
-const clearAllFavorit = async () => {
-  if (!confirm('Apakah Anda yakin ingin menghapus semua favorit?')) return;
+// Add these near your other modal states
+const showClearAllModal = ref(false)
 
+// Replace the existing clearAllFavorit function with these:
+const confirmClearAll = () => {
+  showClearAllModal.value = true
+}
+
+const clearAllFavorit = async () => {
+  showClearAllModal.value = false
+  
   try {
+    isLoading.value = true
     for (const item of favorit.value) {
       await axios.delete(`http://127.0.0.1:8000/api/favorit/${item.id}`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`
         }
-      });
+      })
     }
 
     // Refresh data setelah menghapus
-    await fetchFavorit();
+    await fetchFavorit()
+    showToast('success', 'Semua koleksi favorit berhasil dihapus')
   } catch (err) {
-    console.error('Error clearing favorites:', err);
-    alert('Gagal menghapus semua favorit');
+    console.error('Error clearing favorites:', err)
+    showToast('error', 'Gagal menghapus semua favorit')
+  } finally {
+    isLoading.value = false
   }
-};
+}
+
+const cancelClearAll = () => {
+  showClearAllModal.value = false
+}
 
 // Ganti halaman
 const changePage = (page) => {
@@ -579,10 +759,10 @@ watch(() => authStore.isLoggedIn, async (loggedIn) => {
 
 // Jalankan saat komponen dimuat
 onMounted(async () => {
-  await authStore.init();
+  await authStore.initializeAuth();
   
-  if (!authStore.isLoggedIn) {
-    router.push('/auth/login');
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
   } else {
     await loadFavorites();
     await fetchFavorit();

@@ -53,6 +53,7 @@
                     <input 
                       v-model="koleksi.penulis" 
                       type="text" 
+                      @paste="(e) => handlePasteText(e, 'penulis')"
                       class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:outline-hidden focus:ring-blue-300 focus:border-blue-300 transition duration-150"
                       required
                     >
@@ -132,6 +133,7 @@
                     <input 
                       v-model="koleksi.penerbit" 
                       type="text" 
+                      @paste="(e) => handlePasteText(e, 'penerbit')"
                       class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:outline-hidden focus:ring-blue-300 focus:border-blue-300 transition duration-150"
                     >
                     <p class="text-sm text-red-500" v-if="errorList.penerbit">{{ errorList.penerbit?.[0] }}</p>
@@ -145,6 +147,7 @@
                     <input 
                       v-model="koleksi.keywords" 
                       type="text" 
+                      @paste="(e) => handlePasteText(e, 'keywords')"
                       class="block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:outline-hidden focus:ring-blue-300 focus:border-blue-300 transition duration-150"
                     >
                     <p class="text-sm text-red-500" v-if="errorList.keywords">{{ errorList.keywords?.[0] }}</p>
@@ -284,10 +287,11 @@
         </div>
       </div>
     </div>
+    <Toast />
   </div>
 </template>
 
-<script>
+<!-- <script>
 import axios from 'axios';
 import Sidebar from '~/components/Admin/Sidebar.vue';
 import HeaderAdmin from '~/components/Admin/HeaderAdmin.vue';
@@ -535,10 +539,329 @@ export default {
     },
   },
 };
-</script>
+</script> -->
 
 <script setup>
-import { ref } from 'vue';
+// import { ref } from 'vue';
+useHead({
+  title: 'Tambah Koleksi - Sistem Repositori Pusdiklat BPS'
+})
 
 const pageTitle = ref('Formulir Tambah Koleksi');
+
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+import { definePageMeta, navigateTo } from '#imports'
+import { $fetch } from 'ofetch'
+
+// Import komponen
+import Sidebar from '@/components/Admin/Sidebar.vue'
+import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue'
+import { useToast } from '~/composables/useToast'
+
+const { showToast } = useToast()
+
+// Middleware untuk memastikan hanya admin yang bisa akses
+definePageMeta({
+  middleware: 'admin'
+})
+
+const router = useRouter()
+const authStore = useUnifiedAuthStore()
+
+const showSidebar = ref(false)
+const koleksi = ref({
+  judul: '',
+  penulis: '',
+  ringkasan: '',
+  kategori_bang_kom_id: '',
+  jenis_dokumen_id: '',
+  tahun_terbit: '',
+  penerbit: '',
+  keywords: '',
+  dokumen_pdf: null,
+  youtube_link: '',
+  content_type: '', // 'pdf' atau 'youtube'
+})
+const kategoriBangKomList = ref([])
+const jenisDokumenList = ref([])
+const isLoading = ref(false)
+const isLoadingTitle = ref('Loading')
+const errorList = ref({})
+
+const toggleSidebar = () => {
+  showSidebar.value = !showSidebar.value
+}
+
+// Authentication check menggunakan unified auth
+const checkAuth = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return false
+  }
+
+  if (!authStore.canAccessAdmin) {
+    showToast('error', 'Akses ditolak. Hanya admin yang dapat mengakses halaman ini.')
+    await navigateTo('/')
+    return false
+  }
+
+  try {
+    const isValid = await authStore.checkAuthStatus()
+    if (!isValid) {
+      showToast('error', 'Sesi telah berakhir, silakan login kembali')
+      await navigateTo('/auth/login')
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error('Authentication error:', error)
+    showToast('error', 'Terjadi kesalahan saat verifikasi sesi')
+    await authStore.logout()
+    await navigateTo('/auth/login')
+    return false
+  }
+}
+
+// Pengecekan awal saat komponen dimount
+onMounted(async () => {
+  const isAuthenticated = await checkAuth()
+  if (!isAuthenticated) return
+
+  await Promise.all([
+    fetchKategoriBangKom(),
+    fetchJenisDokumen()
+  ])
+})
+
+// Watch for content_type changes
+watch(() => koleksi.value.content_type, (newVal) => {
+  if (newVal === 'pdf') {
+    // Clear YouTube link if PDF is selected
+    if (koleksi.value.youtube_link) {
+      koleksi.value.youtube_link = ''
+    }
+  } else if (newVal === 'youtube') {
+    // Clear PDF file if YouTube is selected
+    if (koleksi.value.dokumen_pdf) {
+      koleksi.value.dokumen_pdf = null
+    }
+  }
+})
+
+const fetchKategoriBangKom = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  try {
+    const response = await $fetch('http://localhost:8000/api/kategori-bang-kom', {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`,
+        'Accept': 'application/json'
+      }
+    })
+    kategoriBangKomList.value = response.data || []
+  } catch (error) {
+    console.error('Gagal mengambil data kategori bang kom:', error)
+    if (error.status === 401) {
+      showToast('error', 'Sesi telah berakhir, silakan login kembali')
+      await authStore.logout()
+      await navigateTo('/auth/login')
+    } else {
+      showToast('error', 'Gagal mengambil data kategori')
+    }
+  }
+}
+
+const fetchJenisDokumen = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  try {
+    const response = await $fetch('http://localhost:8000/api/jenis-dokumen', {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`,
+        'Accept': 'application/json'
+      }
+    })
+    jenisDokumenList.value = response.data || []
+  } catch (error) {
+    console.error('Gagal mengambil data jenis dokumen:', error)
+    if (error.status === 401) {
+      showToast('error', 'Sesi telah berakhir, silakan login kembali')
+      await authStore.logout()
+      await navigateTo('/auth/login')
+    } else {
+      showToast('error', 'Gagal mengambil data jenis dokumen')
+    }
+  }
+}
+
+// Paste handlers for all text fields
+const handlePasteText = (e, fieldName) => {
+  // Get pasted text
+  const pastedText = (e.clipboardData || window.clipboardData).getData('text')
+  
+  // Clean the text (remove extra spaces and line breaks)
+  const cleanedText = pastedText.replace(/\s+/g, ' ').trim()
+  
+  // For textarea fields (ringkasan)
+  if (e.target.tagName.toLowerCase() === 'textarea') {
+    const currentPosition = e.target.selectionStart
+    const textBefore = koleksi.value[fieldName].substring(0, currentPosition)
+    const textAfter = koleksi.value[fieldName].substring(e.target.selectionEnd)
+    
+    koleksi.value[fieldName] = textBefore + cleanedText + textAfter
+    
+    // Prevent default paste
+    e.preventDefault()
+    
+    // Set cursor position after pasted text
+    nextTick(() => {
+      e.target.selectionStart = currentPosition + cleanedText.length
+      e.target.selectionEnd = currentPosition + cleanedText.length
+    })
+  } 
+  // For input fields (judul, penulis, penerbit, keywords)
+  else {
+    // Combine with existing text
+    koleksi.value[fieldName] = (koleksi.value[fieldName] + cleanedText).substring(0, 255)
+    
+    // Prevent default paste
+    e.preventDefault()
+  }
+}
+
+const handlePasteJudul = (e) => {
+  // Dapatkan teks yang dipaste
+  const pastedText = (e.clipboardData || window.clipboardData).getData('text')
+  
+  // Hapus line breaks dan ganti dengan spasi tunggal
+  const cleanedText = pastedText.replace(/\s+/g, ' ').trim()
+  
+  // Gabungkan dengan teks yang sudah ada
+  koleksi.value.judul = (koleksi.value.judul + cleanedText).substring(0, 255) // Batasi panjang judul jika perlu
+  
+  // Cegah paste default
+  e.preventDefault()
+}
+
+const handlePasteRingkasan = (e) => {
+  // Dapatkan teks yang dipaste
+  const pastedText = (e.clipboardData || window.clipboardData).getData('text')
+  
+  // Hapus line breaks dan ganti dengan spasi tunggal
+  const cleanedText = pastedText.replace(/\s+/g, ' ').trim()
+  
+  // Gabungkan dengan teks yang sudah ada
+  const currentPosition = e.target.selectionStart
+  const textBefore = koleksi.value.ringkasan.substring(0, currentPosition)
+  const textAfter = koleksi.value.ringkasan.substring(e.target.selectionEnd)
+  
+  koleksi.value.ringkasan = textBefore + cleanedText + textAfter
+  
+  // Cegah paste default
+  e.preventDefault()
+  
+  // Setel posisi kursor setelah teks yang dipaste
+  nextTick(() => {
+    e.target.selectionStart = currentPosition + cleanedText.length
+    e.target.selectionEnd = currentPosition + cleanedText.length
+  })
+}
+
+const handleFileUpload = (event) => {
+  koleksi.value.dokumen_pdf = event.target.files[0]
+}
+
+const previewFile = () => {
+  if (koleksi.value.dokumen_pdf) {
+    const fileURL = URL.createObjectURL(koleksi.value.dokumen_pdf)
+    window.open(fileURL, '_blank')
+    
+    // Clean up the object URL after some time
+    setTimeout(() => {
+      URL.revokeObjectURL(fileURL)
+    }, 10000)
+  }
+}
+
+const saveKoleksi = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  isLoading.value = true
+  isLoadingTitle.value = "Menyimpan"
+
+  const formData = new FormData()
+  formData.append('judul', koleksi.value.judul)
+  formData.append('penulis', koleksi.value.penulis)
+  formData.append('ringkasan', koleksi.value.ringkasan)
+  formData.append('kategori_bang_kom_id', koleksi.value.kategori_bang_kom_id)
+  formData.append('jenis_dokumen_id', koleksi.value.jenis_dokumen_id)
+  formData.append('tahun_terbit', koleksi.value.tahun_terbit)
+  formData.append('penerbit', koleksi.value.penerbit)
+  formData.append('keywords', koleksi.value.keywords)
+  formData.append('content_type', koleksi.value.content_type)
+  
+  if (koleksi.value.content_type === 'pdf' && koleksi.value.dokumen_pdf) {
+    formData.append('dokumen_pdf', koleksi.value.dokumen_pdf)
+  }
+  
+  if (koleksi.value.content_type === 'youtube' && koleksi.value.youtube_link) {
+    formData.append('youtube_link', koleksi.value.youtube_link)
+  }
+
+  try {
+    const response = await $fetch('http://127.0.0.1:8000/api/koleksi', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    })
+    
+    showToast('success', response.message || 'Koleksi berhasil disimpan')
+    await navigateTo('/admin/tabelKoleksi') // Navigate to koleksi table after success
+  } catch (error) {
+    console.error(error)
+    if (error.status === 401) {
+      showToast('error', 'Sesi telah berakhir, silakan login kembali')
+      await authStore.logout()
+      await navigateTo('/auth/login')
+    } else if (error.status === 422) {
+      errorList.value = error.data.error
+      showToast('error', 'Terdapat kesalahan dalam form. Silakan periksa kembali.')
+    } else {
+      showToast('error', 'Terjadi kesalahan saat menyimpan data.')
+    }
+  } finally {
+    isLoading.value = false
+    isLoadingTitle.value = "Loading"
+  }
+}
+
+const resetForm = () => {
+  koleksi.value = {
+    judul: '',
+    penulis: '',
+    ringkasan: '',
+    kategori_bang_kom_id: '',
+    jenis_dokumen_id: '',
+    tahun_terbit: '',
+    penerbit: '',
+    keywords: '',
+    dokumen_pdf: null,
+    youtube_link: '',
+    content_type: '',
+  }
+  errorList.value = {}
+}
 </script>

@@ -9,3 +9,11 @@
     </div>
 </template>
   
+<script setup>
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+
+const authStore = useUnifiedAuthStore()
+
+// Jika admin mengakses halaman user, tetap tampilkan NavBar
+// Tidak perlu redirect karena middleware sudah menangani
+</script>

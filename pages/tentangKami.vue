@@ -4,26 +4,26 @@
         <!-- Banner Section -->
         <div class="relative">
           <banner />
-          <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-gray-50 to-transparent"></div>
+          <div class="absolute inset-x-0 bottom-0 h-10"></div>
         </div>
   
         <!-- Main Content -->
-        <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+        <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-10">
           <!-- Hero Section -->
-          <section class="text-center mb-16">
+          <!-- <section class="text-center mb-16">
             <div class="max-w-4xl mx-auto">
               <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl mb-6">Tentang Kami</h1>
               <p class="text-xl text-gray-600 leading-relaxed">
                 Pusat Pendidikan dan Pelatihan Badan Pusat Statistik berkomitmen untuk menyediakan pendidikan dan pelatihan statistik berkualitas tinggi.
               </p>
             </div>
-          </section>
+          </section> -->
   
           <!-- Visi Misi Section -->
           <section>
             <div class="grid md:grid-cols-2 gap-8">
               <!-- Visi Card -->
-              <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <!-- <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center mb-6">
                   <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,10 +35,10 @@
                 <p class="text-gray-600 leading-relaxed">
                   Menjadi pusat pendidikan dan pelatihan statistik terkemuka yang mendukung pengembangan kapasitas SDM statistik nasional untuk menghasilkan data berkualitas.
                 </p>
-              </div>
+              </div> -->
   
               <!-- Misi Card -->
-              <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+              <!-- <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <div class="flex items-center mb-6">
                   <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,15 +65,15 @@
                     <span>Mendorong inovasi dalam pendidikan statistik</span>
                   </li>
                 </ul>
-              </div>
+              </div> -->
             </div>
           </section>
   
           <!-- Map Section -->
           <section>
-            <div class="max-w-4xl mx-auto text-center mb-12">
+            <!-- <div class="max-w-4xl mx-auto mb-12"> -->
+              <div class="mx-auto mb-12">
               <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Kunjungi Kami</h2>
-              <p class="text-lg text-gray-500 max-w-2xl mx-auto">Kami berada di lokasi yang strategis dan mudah dijangkau</p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -173,6 +173,9 @@
   </template>
   
   <script setup>
+  useHead({
+  title: 'Tentang Kami - Sistem Repositori Pusdiklat BPS'
+})
   </script>
   
   <style scoped>

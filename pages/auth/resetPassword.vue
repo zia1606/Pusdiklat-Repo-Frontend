@@ -58,6 +58,10 @@
 <script setup>
 import { ref } from 'vue'
 
+useHead({
+  title: 'Reset Password - Sistem Repositori Pusdiklat BPS'
+})
+
 const loading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')

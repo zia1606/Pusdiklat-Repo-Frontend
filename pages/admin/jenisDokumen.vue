@@ -55,7 +55,7 @@
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                             </svg>
                                                         </button>
-                                                        <button @click="deleteJenisDokumen(item.id)" class="w-5 mr-2 cursor-pointer transform hover:text-red-500 hover:scale-110">
+                                                        <button @click="confirmDelete(item.id)" class="w-5 mr-2 cursor-pointer transform hover:text-red-500 hover:scale-110">
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                             </svg>
@@ -100,6 +100,7 @@
                             id="nama" 
                             class="w-full pl-4 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Masukkan nama jenis dokumen"
+                            required
                         >
                         </div>
                     </div>
@@ -107,14 +108,23 @@
                     <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button
                         type="submit"
-                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                        :disabled="isSubmitting"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                         >
-                        {{ isEditMode ? 'Update' : 'Simpan' }}
+                        <span v-if="!isSubmitting">{{ isEditMode ? 'Update' : 'Simpan' }}</span>
+                        <span v-else class="flex items-center">
+                          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Memproses...
+                        </span>
                         </button>
                         <button
                         type="button"
                         @click="closeModal"
-                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                        :disabled="isSubmitting"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                         >
                         Batal
                         </button>
@@ -126,57 +136,100 @@
             </div>
         </div>
         </div>
-        
+
+        <!-- Delete Confirmation Modal -->
+        <div v-if="showDeleteModal" class="fixed inset-0 overflow-y-auto z-50">
+          <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelDelete"></div>
+            </div>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                  <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus Jenis Dokumen</h3>
+                    <div class="mt-2">
+                      <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus jenis dokumen ini? Tindakan ini tidak dapat dibatalkan.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button 
+                  @click="deleteJenisDokumen"
+                  :disabled="isDeleting"
+                  class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                >
+                  <span v-if="!isDeleting">Hapus</span>
+                  <span v-else class="flex items-center">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Menghapus...
+                  </span>
+                </button>
+                <button 
+                  @click="cancelDelete"
+                  :disabled="isDeleting"
+                  class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toast Component -->
+        <Toast />
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
-import { useAdminAuthStore } from '@/stores/adminAuth';
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
+import { definePageMeta, navigateTo } from '#imports';
+import { $fetch } from 'ofetch';
 import Sidebar from '~/components/Admin/Sidebar.vue';
 import HeaderAdmin from '~/components/Admin/HeaderAdmin.vue';
+import { useToast } from '~/composables/useToast';
+
+useHead({
+  title: 'Jenis Dokumen - Sistem Repositori Pusdiklat BPS'
+})
+
+const { showToast } = useToast();
 
 const router = useRouter();
-const authStore = useAdminAuthStore();
+const authStore = useUnifiedAuthStore();
 
 const showSidebar = ref(false);
 const jenisDokumen = ref([]);
 const distribusiJenis = ref([]);
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
+const isSubmitting = ref(false);
 const form = ref({
     id: null,
     nama: ''
 });
 
-// Authentication check
-const checkAuth = async () => {
-  await authStore.init();
-  
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
-    return false;
-  }
+// State for delete confirmation modal
+const showDeleteModal = ref(false);
+const itemToDelete = ref(null);
+const isDeleting = ref(false);
 
-  try {
-    const isValid = await authStore.verifyToken();
-    if (!isValid) {
-      alert('Sesi telah berakhir, silakan login kembali');
-      await authStore.logout();
-      router.push('/admin/auth/login');
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error('Authentication error:', error);
-    alert('Terjadi kesalahan saat verifikasi sesi');
-    await authStore.logout();
-    router.push('/admin/auth/login');
-    return false;
-  }
-};
+// Middleware untuk memastikan hanya admin yang bisa akses
+definePageMeta({
+  middleware: 'admin'
+});
 
 // Computed property untuk menggabungkan data jenis dokumen dengan jumlah koleksi
 const jenisDokumenWithCounts = computed(() => {
@@ -189,52 +242,88 @@ const jenisDokumenWithCounts = computed(() => {
   });
 });
 
+// Authentication check menggunakan unified auth
+const checkAuth = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return false
+  }
+
+  if (!authStore.canAccessAdmin) {
+    showToast('error', 'Akses ditolak. Hanya admin yang dapat mengakses halaman ini.')
+    await navigateTo('/')
+    return false
+  }
+
+  try {
+    const isValid = await authStore.checkAuthStatus()
+    if (!isValid) {
+      showToast('warning', 'Sesi telah berakhir, silakan login kembali')
+      await navigateTo('/auth/login')
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error('Authentication error:', error)
+    showToast('error', 'Terjadi kesalahan saat verifikasi sesi')
+    await authStore.logout()
+    await navigateTo('/auth/login')
+    return false
+  }
+}
+
 const toggleSidebar = () => {
     showSidebar.value = !showSidebar.value;
 };
 
 const fetchJenisDokumen = async () => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
+    if (!authStore.isAuthenticated) {
+      await navigateTo('/auth/login');
       return;
     }
 
     try {
-        const response = await axios.get('http://localhost:8000/api/jenis-dokumen', {
+        const response = await $fetch('http://localhost:8000/api/jenis-dokumen', {
           headers: {
-            'Authorization': `Bearer ${authStore.token}`
+            'Authorization': `Bearer ${authStore.token}`,
+            'Accept': 'application/json'
           }
         });
-        jenisDokumen.value = response.data.data;
+        jenisDokumen.value = response.data;
     } catch (error) {
         console.error('Error fetching jenis dokumen:', error);
-        if (error.response?.status === 401) {
-          alert('Sesi telah berakhir, silakan login kembali');
+        if (error.status === 401) {
+          showToast('warning', 'Sesi telah berakhir, silakan login kembali');
           await authStore.logout();
-          router.push('/admin/auth/login');
+          await navigateTo('/auth/login');
+        } else {
+          showToast('error', 'Gagal memuat data jenis dokumen');
         }
     }
 };
 
 const fetchDistribusiJenis = async () => {
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
     return;
   }
 
   try {
-      const response = await axios.get('http://localhost:8000/api/koleksi/distribusi-jenis', {
+      const response = await $fetch('http://localhost:8000/api/koleksi/distribusi-jenis', {
         headers: {
-          'Authorization': `Bearer ${authStore.token}`
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
         }
       });
-      distribusiJenis.value = response.data.data;
+      distribusiJenis.value = response.data;
   } catch (error) {
       console.error('Error fetching distribusi jenis:', error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
         await authStore.logout();
-        router.push('/admin/auth/login');
+        await navigateTo('/auth/login');
+      } else {
+        showToast('error', 'Gagal memuat distribusi jenis dokumen');
       }
   }
 };
@@ -256,99 +345,134 @@ const closeModal = () => {
 };
 
 const addJenisDokumen = async () => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
+    if (!authStore.isAuthenticated) {
+      await navigateTo('/auth/login');
+      return;
+    }
+
+    if (!form.value.nama.trim()) {
+      showToast('warning', 'Nama jenis dokumen tidak boleh kosong');
       return;
     }
 
     try {
-        const response = await axios.post('http://localhost:8000/api/jenis-dokumen', form.value, {
+        isSubmitting.value = true;
+        const response = await $fetch('http://localhost:8000/api/jenis-dokumen', {
+          method: 'POST',
+          body: form.value,
           headers: {
-            'Authorization': `Bearer ${authStore.token}`
+            'Authorization': `Bearer ${authStore.token}`,
+            'Accept': 'application/json'
           }
         });
-        jenisDokumen.value.push(response.data.data);
+        jenisDokumen.value.push(response.data);
         closeModal();
-        alert('Jenis dokumen berhasil ditambahkan!');
-        // Refresh distribusi data setelah menambah jenis dokumen
+        showToast('success', 'Jenis dokumen berhasil ditambahkan');
         await fetchDistribusiJenis();
     } catch (error) {
         console.error('Error adding jenis dokumen:', error);
-        if (error.response?.status === 401) {
-          alert('Sesi telah berakhir, silakan login kembali');
+        if (error.status === 401) {
+          showToast('warning', 'Sesi telah berakhir, silakan login kembali');
           await authStore.logout();
-          router.push('/admin/auth/login');
+          await navigateTo('/auth/login');
         } else {
-          alert('Gagal menambahkan jenis dokumen. Silakan coba lagi.'); 
+          showToast('error', 'Gagal menambahkan jenis dokumen');
         }
+    } finally {
+        isSubmitting.value = false;
     }
 };
 
 const updateJenisDokumen = async () => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
+    if (!authStore.isAuthenticated) {
+      await navigateTo('/auth/login');
+      return;
+    }
+
+    if (!form.value.nama.trim()) {
+      showToast('warning', 'Nama jenis dokumen tidak boleh kosong');
       return;
     }
 
     try {
-        const response = await axios.put(`http://localhost:8000/api/jenis-dokumen/${form.value.id}`, form.value, {
+        isSubmitting.value = true;
+        const response = await $fetch(`http://localhost:8000/api/jenis-dokumen/${form.value.id}`, {
+          method: 'PUT',
+          body: form.value,
           headers: {
-            'Authorization': `Bearer ${authStore.token}`
+            'Authorization': `Bearer ${authStore.token}`,
+            'Accept': 'application/json'
           }
         });
         const index = jenisDokumen.value.findIndex(k => k.id === form.value.id);
-        jenisDokumen.value[index] = response.data.data;
+        jenisDokumen.value[index] = response.data;
         closeModal();
-        alert('Jenis dokumen berhasil diperbarui!');
-        // Refresh distribusi data setelah update jenis dokumen
+        showToast('success', 'Jenis dokumen berhasil diperbarui');
         await fetchDistribusiJenis();
     } catch (error) {
         console.error('Error updating jenis dokumen:', error);
-        if (error.response?.status === 401) {
-          alert('Sesi telah berakhir, silakan login kembali');
+        if (error.status === 401) {
+          showToast('warning', 'Sesi telah berakhir, silakan login kembali');
           await authStore.logout();
-          router.push('/admin/auth/login');
+          await navigateTo('/auth/login');
         } else {
-          alert('Gagal memperbarui jenis dokumen. Silakan coba lagi.');
+          showToast('error', 'Gagal memperbarui jenis dokumen');
         }
+    } finally {
+        isSubmitting.value = false;
     }
 };
 
-const deleteJenisDokumen = async (id) => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return;
-    }
+const confirmDelete = (id) => {
+  itemToDelete.value = id;
+  showDeleteModal.value = true;
+};
 
-    if (window.confirm('Apakah Anda yakin ingin menghapus jenis dokumen ini?')) {
-        try {
-            await axios.delete(`http://localhost:8000/api/jenis-dokumen/${id}`, {
-              headers: {
-                'Authorization': `Bearer ${authStore.token}`
-              }
-            });
-            jenisDokumen.value = jenisDokumen.value.filter(k => k.id !== id);
-            alert('Jenis dokumen berhasil dihapus!');
-            // Refresh distribusi data setelah delete jenis dokumen
-            await fetchDistribusiJenis();
-        } catch (error) {
-            console.error('Error deleting jenis dokumen:', error);
-            if (error.response?.status === 401) {
-              alert('Sesi telah berakhir, silakan login kembali');
-              await authStore.logout();
-              router.push('/admin/auth/login');
-            } else {
-              alert('Gagal menghapus jenis dokumen. Silakan coba lagi.');
-            }
+const cancelDelete = () => {
+  showDeleteModal.value = false;
+  itemToDelete.value = null;
+};
+
+const deleteJenisDokumen = async () => {
+  if (!itemToDelete.value) return;
+  
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
+    return;
+  }
+
+  try {
+      isDeleting.value = true;
+      await $fetch(`http://localhost:8000/api/jenis-dokumen/${itemToDelete.value}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
         }
-    }
+      });
+      jenisDokumen.value = jenisDokumen.value.filter(k => k.id !== itemToDelete.value);
+      showDeleteModal.value = false;
+      showToast('success', 'Jenis dokumen berhasil dihapus');
+      await fetchDistribusiJenis();
+  } catch (error) {
+      console.error('Error deleting jenis dokumen:', error);
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
+        await authStore.logout();
+        await navigateTo('/auth/login');
+      } else {
+        showToast('error', 'Gagal menghapus jenis dokumen');
+      }
+  } finally {
+      isDeleting.value = false;
+      itemToDelete.value = null;
+  }
 };
 
 onMounted(async () => {
   const isAuthenticated = await checkAuth();
   if (!isAuthenticated) return;
   
-  // Fetch data jenis dokumen dan distribusi secara bersamaan
   await Promise.all([
     fetchJenisDokumen(),
     fetchDistribusiJenis()

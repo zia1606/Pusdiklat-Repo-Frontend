@@ -1,14 +1,19 @@
+// composables/useToast.js
 export const useToast = () => {
-    const showToast = (type, message) => {
-      const app = useNuxtApp();
-      if (app.$toast) {
-        app.$toast[type](message);
-      } else {
-        console.warn('Toast plugin not available');
-        // Fallback to alert if toast isn't available
-        alert(message);
-      }
-    };
-  
-    return { showToast };
-  };
+  const toasts = useState('toasts', () => [])
+
+  const showToast = (type, message, duration = 5000) => {
+    const id = Date.now()
+    toasts.value.push({ id, type, message })
+    
+    setTimeout(() => {
+      removeToast(id)
+    }, duration)
+  }
+
+  const removeToast = (id) => {
+    toasts.value = toasts.value.filter(toast => toast.id !== id)
+  }
+
+  return { toasts, showToast, removeToast }
+}

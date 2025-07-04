@@ -47,12 +47,22 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { useAdminAuthStore } from '@/stores/adminAuth'; // Make sure this path is correct
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
+import { definePageMeta, navigateTo } from '#imports';
 import PdfViewer from '@/components/PdfViewer.vue'; // Adjust path as needed
+
+useHead({
+  title: 'PDF Admin - Sistem Repositori Pusdiklat BPS'
+})
+
+// Middleware untuk memastikan hanya admin yang bisa akses
+definePageMeta({
+  middleware: 'admin'
+})
 
 const route = useRoute();
 const router = useRouter();
-const authStore = useAdminAuthStore();
+const authStore = useUnifiedAuthStore();
 
 const pdfUrl = ref('');
 const loading = ref(true);
@@ -68,9 +78,41 @@ const onDocumentLoaded = (document) => {
   // You can add additional logic here when the document is loaded
 };
 
-// Initialize authStore and other necessary data
+// Authentication check menggunakan unified auth
+const checkAuth = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return false
+  }
+
+  if (!authStore.canAccessAdmin) {
+    alert('Akses ditolak. Hanya admin yang dapat mengakses halaman ini.')
+    await navigateTo('/')
+    return false
+  }
+
+  try {
+    const isValid = await authStore.checkAuthStatus()
+    if (!isValid) {
+      alert('Sesi telah berakhir, silakan login kembali')
+      await navigateTo('/auth/login')
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error('Authentication error:', error)
+    alert('Terjadi kesalahan saat verifikasi sesi')
+    await authStore.logout()
+    await navigateTo('/auth/login')
+    return false
+  }
+}
+
+// Initialize authStore and fetch PDF
 onMounted(async () => {
-  await authStore.init();
+  const isAuthenticated = await checkAuth()
+  if (!isAuthenticated) return
+  
   await fetchPdf();
 });
 
@@ -80,27 +122,17 @@ const fetchPdf = async () => {
     error.value = '';
     
     // Check authentication
-    if (!authStore.isLoggedIn) {
-      throw new Error('Anda harus login terlebih dahulu');
+    if (!authStore.isAuthenticated) {
+      await navigateTo('/auth/login')
+      return
     }
 
-    // Verify token
-    const isValid = await authStore.verifyToken();
-    if (!isValid) {
-      await authStore.logout();
-      router.push('/admin/auth/login');
-      throw new Error('Sesi telah berakhir. Silakan login kembali.');
-    }
-
-    // Get the token
-    const token = authStore.token;
-    
     // Fetch PDF with authentication headers
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/koleksi/${route.params.id}/admin-pdf`, 
+      `http://127.0.0.1:8000/api/koleksi/${route.params.id}/pdf`, 
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/pdf',
         },
         responseType: 'blob'
@@ -119,7 +151,9 @@ const fetchPdf = async () => {
     if (err.response?.status === 401) {
       error.value = 'Sesi telah berakhir. Silakan login kembali.';
       await authStore.logout();
-      router.push('/admin/auth/login');
+      await navigateTo('/auth/login');
+    } else if (err.response?.status === 403) {
+      error.value = 'Anda tidak memiliki izin untuk mengakses dokumen ini.';
     } else if (err.response?.status === 404) {
       error.value = 'Dokumen PDF tidak ditemukan.';
     } else {
@@ -136,5 +170,4 @@ onUnmounted(() => {
     URL.revokeObjectURL(pdfUrl.value);
   }
 });
-
 </script>

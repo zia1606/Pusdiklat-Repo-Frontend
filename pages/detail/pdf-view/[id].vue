@@ -38,12 +38,16 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { useAuthStore } from '~/stores/auth';
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 import PdfViewer from '~/components/PdfViewer.vue';
+
+useHead({
+  title: 'PDF - Sistem Repositori Pusdiklat BPS'
+})
 
 const route = useRoute();
 const router = useRouter();
-const authStore = useAuthStore();
+const authStore = useUnifiedAuthStore()
 
 const koleksi = ref({});
 const pdfUrl = ref('');
@@ -59,18 +63,15 @@ const fetchPdf = async () => {
     loading.value = true;
     error.value = '';
     
-    const authStore = useAuthStore();
-    await authStore.init();
+    await authStore.initializeAuth();
 
-    // Buat URL dengan timestamp untuk menghindari cache
     const timestamp = Date.now();
-    const url = authStore.isLoggedIn 
+    const url = authStore.isAuthenticated 
       ? `http://127.0.0.1:8000/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
       : `http://127.0.0.1:8000/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
 
-    // Jika user login, tambahkan token
     const headers = {};
-    if (authStore.isLoggedIn) {
+    if (authStore.isAuthenticated) {
       headers['Authorization'] = `Bearer ${authStore.token}`;
     }
 
@@ -88,7 +89,7 @@ const fetchPdf = async () => {
   } catch (err) {
     error.value = err.message;
     if (err.message.includes('login')) {
-      // Redirect ke login jika perlu
+      navigateTo('/auth/login');
     }
   } finally {
     loading.value = false;
@@ -96,7 +97,7 @@ const fetchPdf = async () => {
 };
 
 onMounted(async () => {
-  await authStore.init();
+  await authStore.initializeAuth();
   await fetchPdf();
 });
 </script>

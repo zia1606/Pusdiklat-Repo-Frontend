@@ -265,7 +265,7 @@
                         </NuxtLink> -->
                         <NuxtLink 
                             :to="`/detail/${item.id}`" 
-                            class="hidden sm:inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            class="hidden sm:inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
                             >
                             Lihat Detail
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -348,7 +348,7 @@
                           </NuxtLink> -->
                           <NuxtLink 
                             :to="`/detail/${item.id}`" 
-                            class="hidden sm:inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-800 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            class="hidden sm:inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white hidden sm:inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
                             >
                             Lihat Detail
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -414,7 +414,7 @@
       isLoadingBest.value = true
       
       // Coba ambil best collection terlebih dahulu
-      const bestResponse = await $fetch('http://localhost:8000/api/koleksi/best-collections')
+      const bestResponse = await $fetch('http://127.0.0.1:8000/api/koleksi/best-collections')
       
       if (bestResponse.success && bestResponse.data.length > 0) {
         bestCollections.value = bestResponse.data.map(item => ({

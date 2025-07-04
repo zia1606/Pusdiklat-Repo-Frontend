@@ -19,5 +19,19 @@ export default defineNuxtConfig({
         changeOrigin: true,
       }
     }
+  },
+
+  // Tambahkan konfigurasi head di sini
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/img/logo.png' }
+      ],
+      // Anda juga bisa menambahkan meta tags lainnya jika diperlukan
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        // Tambahan meta tags lainnya
+      ]
+    }
   }
 })

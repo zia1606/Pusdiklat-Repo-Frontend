@@ -86,7 +86,7 @@
   
   <script setup>
   import { ref, computed } from 'vue';
-  import { useAdminAuthStore } from '~/stores/adminAuth';
+  import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
   
   const props = defineProps({
     pageTitle: {
@@ -96,18 +96,18 @@
   });
   
   const emit = defineEmits(['toggle-sidebar']);
-  const authStore = useAdminAuthStore();
+  const authStore = useUnifiedAuthStore();
   
   const isUserMenuOpen = ref(false);
   let hoverTimeout = null;
   let dropdownHoverTimeout = null;
   
   // Computed properties
-  const adminName = computed(() => authStore.admin?.name || 'Admin');
-  const adminEmail = computed(() => authStore.admin?.email || 'admin@example.com');
-  const adminAvatar = computed(() => 
-    `https://ui-avatars.com/api/?name=${authStore.admin?.name || 'Admin'}&background=random&color=fff`
-  );
+  const adminName = computed(() => authStore.user?.name || 'Admin');
+  const adminEmail = computed(() => authStore.user?.email || 'admin@example.com');
+  const adminAvatar = computed(() => authStore.getUserAvatar || 
+  `https://ui-avatars.com/api/?name=${authStore.user?.name || 'Admin'}&background=random&color=fff`
+)
   
   const toggleSidebar = () => {
     emit('toggle-sidebar');
@@ -146,15 +146,25 @@
   };
   
   const logout = async () => {
-    try {
-      await authStore.logout();
-      navigateTo('/admin/auth/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      isUserMenuOpen.value = false;
-    }
-  };
+  try {
+    // Tutup dropdown menu segera
+    isUserMenuOpen.value = false
+    
+    // Tambahkan loading state jika perlu
+    const loading = ref(true)
+    
+    await authStore.logout()
+    
+    // Gunakan window.location untuk pastikan semua state reset
+    window.location.href = '/auth/login'
+    
+  } catch (error) {
+    console.error('Logout failed:', error)
+    // Fallback jika ada error
+    authStore.clearAuth()
+    window.location.href = '/auth/login'
+  }
+}
   </script>
   
   <style scoped>

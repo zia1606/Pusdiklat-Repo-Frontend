@@ -149,132 +149,158 @@
       <div class="bg-white rounded-xl shadow overflow-hidden">
         <!-- Responsive Table -->
         <div class="overflow-x-auto">
-        <table class="min-w-full shadow-sm border border-gray-300 divide-y divide-gray-200">
-        <!-- Table Head -->
-        <thead class="bg-gray-100">
-          <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
-              <input
-                type="checkbox"
-                v-model="selectAll"
-                @change="toggleSelectAll"
-                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4 sm:w-1/3">
-              Judul
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-              Penulis
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-              Jenis Dokumen
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-              Kategori Bangkom
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">
-              Tahun
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-              Status
-            </th>
-            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-              Actions
-            </th>
-          </tr>
-        </thead>
-            <!-- Table Body -->
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="item in koleksi" :key="item.id" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap w-12">
-                  <input
-                    type="checkbox"
-                    :value="item.id"
-                    v-model="selectedItems"
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                </td>
-                <td class="px-6 py-4 w-1/4 sm:w-1/3">
-                  <div class="text-sm font-medium text-gray-900 truncate">{{ item.judul }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ item.penulis }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ item.jenis_dokumen }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ item.kategoriBangKom }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ item.tahun_terbit }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    v-if="item.is_best_collection"
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
-                  >
-                    Best Collection
-                    <button 
-                      @click.stop="unmarkAsBest(item.id)"
-                      class="ml-1 text-red-600 hover:text-red-900"
-                      title="Remove from Best Collection"
-                    >
-                      <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </span>
-                  <span
-                    v-else
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
-                  >
-                    Regular
-                  </span>
-                </td>
-                <td class="text-gray-600 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div class="flex justify-end space-x-3">
-                    <!-- View Button -->
-                    <button
-                      @click="viewPdf(item.id)"
-                      class="w-4 mr-2 transform hover:text-yellow-500 hover:scale-110 cursor-pointer"
-                      title="View PDF"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    </button>
-                    
-                    <!-- Edit Button -->
-                    <NuxtLink :to="`/admin/${item.id}`" class="w-4 mr-2 transform hover:text-blue-500 hover:scale-110">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                      </svg>
-                    </NuxtLink>
-                    
-                    <!-- Delete Button -->
-                    <button
-                      @click="deleteKoleksi($event, item.id)"
-                      class="w-4 mr-2 transform hover:text-red-500 hover:scale-110 cursor-pointer"
-                      title="Delete"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr v-if="koleksi.length === 0">
-                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
-                  No collections found
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-100">
+    <tr>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+        <input
+          type="checkbox"
+          v-model="selectAll"
+          @change="toggleSelectAll"
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        />
+      </th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Penulis</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipe Konten</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Dokumen</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori Bangkom</th>
+      <!-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun</th> -->
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+      <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diperbarui</th>
+    </tr>
+  </thead>
+  
+  <tbody class="bg-white divide-y divide-gray-200">
+    <tr v-for="item in koleksi" :key="item.id" class="hover:bg-gray-50">
+      <td class="px-6 py-4 whitespace-nowrap w-12">
+        <input
+          type="checkbox"
+          :value="item.id"
+          v-model="selectedItems"
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        />
+      </td>
+      
+      <!-- Kolom Judul -->
+      <td class="px-6 py-4 max-w-[240px]">
+        <div class="text-sm font-medium text-gray-900 truncate" :title="item.judul">
+          {{ item.judul }}
         </div>
+      </td>
+
+      <!-- Kolom Penulis -->
+      <td class="px-6 py-4 max-w-[180px]">
+        <div class="text-sm text-gray-500 truncate" :title="item.penulis">
+          {{ item.penulis }}
+        </div>
+      </td>
+      
+      <!-- Kolom Tipe Konten -->
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span v-if="item.youtube_link" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+          YouTube
+        </span>
+        <span v-else class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+          PDF
+        </span>
+      </td>
+      
+      <!-- Kolom Jenis Dokumen -->
+      <td class="px-6 py-4 max-w-[150px]">
+        <div class="text-sm text-gray-500 truncate" :title="item.jenis_dokumen">
+          {{ item.jenis_dokumen }}
+        </div>
+      </td>
+      
+      <!-- Kolom Kategori Bangkom -->
+      <td class="px-6 py-4 max-w-[150px]">
+        <div class="text-sm text-gray-500 truncate" :title="item.kategoriBangKom">
+          {{ item.kategoriBangKom }}
+        </div>
+      </td>
+      
+      <!-- Kolom Tahun Terbit -->
+      <!-- <td class="px-6 py-4 whitespace-nowrap">
+        <div class="text-sm text-gray-500">{{ item.tahun_terbit }}</div>
+      </td> -->
+      
+      <!-- Kolom Status -->
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span
+          v-if="item.is_best_collection"
+          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+        >
+          Best Collection
+          <button 
+            @click.stop="unmarkAsBest(item.id)"
+            class="ml-1 text-red-600 hover:text-red-900"
+            title="Remove from Best Collection"
+          >
+            <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </span>
+        <span
+          v-else
+          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+        >
+          Regular
+        </span>
+      </td>
+      
+      <!-- Kolom Actions -->
+      <td class="text-gray-600 px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div class="flex justify-end space-x-3">
+          <!-- View Button -->
+          <button
+            @click="viewContent(item)"
+            class="w-4 mr-2 transform hover:text-yellow-500 hover:scale-110 cursor-pointer"
+            :title="item.youtube_link ? 'Lihat Video' : 'Lihat PDF'"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+          
+          <!-- Edit Button -->
+          <NuxtLink :to="`/admin/${item.id}`" class="w-4 mr-2 transform hover:text-blue-500 hover:scale-110">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          </NuxtLink>
+          
+          <!-- Delete Button -->
+          <button
+            @click.stop="confirmDelete(item.id)"
+            class="w-4 mr-2 transform hover:text-red-500 hover:scale-110 cursor-pointer"
+            title="Delete"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </td>
+
+      <!-- Kolom Updated At -->
+      <td class="px-6 py-4 whitespace-nowrap">
+        <div class="text-sm text-gray-500">
+          {{ formatDate(item.updated_at) }}
+        </div>
+      </td>
+    </tr>
+    <tr v-if="koleksi.length === 0">
+      <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500">
+        No collections found
+      </td>
+    </tr>
+  </tbody>
+    </table>
+  </div>
   
         <!-- Pagination -->
         <div class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200">
@@ -455,354 +481,656 @@
           </div>
         </div>
       </div>
+
+      <!-- Delete Confirmation Modal -->
+<div v-if="showDeleteModal" class="fixed inset-0 overflow-y-auto z-50">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelDelete"></div>
+    </div>
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus Koleksi</h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus koleksi ini? Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button 
+          @click="deleteKoleksi"
+          :disabled="isDeleting"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+        >
+          <span v-if="!isDeleting">Hapus</span>
+          <span v-else class="flex items-center">
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Menghapus...
+          </span>
+        </button>
+        <button 
+          @click="cancelDelete"
+          :disabled="isDeleting"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+        >
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mark as Best Collection Confirmation Modal -->
+  <div v-if="showMarkBestModal" class="fixed inset-0 overflow-y-auto z-50">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelMarkBest"></div>
+      </div>
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+              <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Tandai Best Collection</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">Apakah Anda yakin ingin menandai {{ selectedItems.length }} koleksi terpilih sebagai Best Collection?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button 
+            @click="confirmMarkBest(true)"
+            :disabled="isMarking"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            <span v-if="!isMarking">Ya, Tandai</span>
+            <span v-else class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Memproses...
+            </span>
+          </button>
+          <button 
+            @click="cancelMarkBest"
+            :disabled="isMarking"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unmark as Best Collection Confirmation Modal -->
+  <div v-if="showUnmarkBestModal" class="fixed inset-0 overflow-y-auto z-50">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelUnmarkBest"></div>
+      </div>
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 sm:mx-0 sm:h-10 sm:w-10">
+              <svg class="h-6 w-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus Best Collection</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus {{ selectedItems.length }} koleksi terpilih dari Best Collection?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button 
+            @click="confirmMarkBest(false)"
+            :disabled="isMarking"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-600 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            <span v-if="!isMarking">Ya, Hapus</span>
+            <span v-else class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Memproses...
+            </span>
+          </button>
+          <button 
+            @click="cancelUnmarkBest"
+            :disabled="isMarking"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unmark Single Item Confirmation Modal -->
+  <div v-if="showUnmarkSingleModal" class="fixed inset-0 overflow-y-auto z-50">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelUnmarkSingle"></div>
+      </div>
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="sm:flex sm:items-start">
+            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 sm:mx-0 sm:h-10 sm:w-10">
+              <svg class="h-6 w-6 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus Best Collection</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus koleksi ini dari Best Collection?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button 
+            @click="confirmUnmarkSingle"
+            :disabled="isMarking"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-600 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            <span v-if="!isMarking">Ya, Hapus</span>
+            <span v-else class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Memproses...
+            </span>
+          </button>
+          <button 
+            @click="cancelUnmarkSingle"
+            :disabled="isMarking"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+          >
+            Batal
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
     </div>
   
   </div>
       </main>
     </div>
+
+    <!-- Toast Component -->
+<Toast />
+
   </div>
   </template>
   
   <script setup>
-  // Import statements
-  import { ref, onMounted, computed, watch } from 'vue';
-  import { useRouter } from 'vue-router';
-  import axios from 'axios';
-  import Sidebar from '@/components/Admin/Sidebar.vue';
-  import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue';
-import { NuxtLink } from '#components';
+// Import statements
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+import { definePageMeta, navigateTo } from '#imports'
+import axios from 'axios'
+import Sidebar from '@/components/Admin/Sidebar.vue'
+import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue'
+import { NuxtLink } from '#components'
+// Di bagian atas script setup
+import { useToast } from '~/composables/useToast'
+
+useHead({
+  title: 'Kelola Koleksi - Sistem Repositori Pusdiklat BPS'
+})
+
+const { showToast } = useToast()
+
+// State untuk modal konfirmasi
+const showDeleteModal = ref(false)
+const itemToDelete = ref(null)
+const isDeleting = ref(false)
+// State for modals
+const showMarkBestModal = ref(false)
+const showUnmarkBestModal = ref(false)
+const showUnmarkSingleModal = ref(false)
+const isMarking = ref(false)
+const itemToMark = ref(null)
+
+// Middleware untuk memastikan hanya admin yang bisa akses
+definePageMeta({
+  middleware: 'admin'
+})
+
+const router = useRouter()
+const authStore = useUnifiedAuthStore()
+
+const pageTitle = ref('Tabel Koleksi')
+
+// Di parent component (Layout Admin)
+const showSidebar = ref(false)
+
+const toggleSidebar = () => {
+  showSidebar.value = !showSidebar.value
+}
+
+// State for collections
+const koleksi = ref([])
+const isLoading = ref(false)
+const errorMessage = ref("")
+const currentPage = ref(1)
+const perPage = ref(10)
+const total = ref(0)
+const lastPage = ref(1)
+const nextPageUrl = ref(null)
+const prevPageUrl = ref(null)
+
+// State for filters
+const searchQuery = ref("")
+const selectedKategori = ref([])
+const selectedJenisDokumen = ref([])
+const sortBy = ref("terbaru")
+const isFilterModalOpen = ref(false)
+const searchKategori = ref("")
+const searchJenisDokumen = ref("")
+const kategoriList = ref([])
+const jenisDokumenList = ref([])
+
+// State for selection
+const selectedItems = ref([])
+const selectAll = ref(false)
+
+// Authentication check menggunakan unified auth
+const checkAuth = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return false
+  }
+
+  if (!authStore.canAccessAdmin) {
+    alert('Akses ditolak. Hanya admin yang dapat mengakses halaman ini.')
+    await navigateTo('/')
+    return false
+  }
+
+  try {
+    const isValid = await authStore.checkAuthStatus()
+    if (!isValid) {
+      alert('Sesi telah berakhir, silakan login kembali')
+      await navigateTo('/auth/login')
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error('Authentication error:', error)
+    alert('Terjadi kesalahan saat verifikasi sesi')
+    await authStore.logout()
+    await navigateTo('/auth/login')
+    return false
+  }
+}
+
+// Watch for changes in the collection data to reset selectAll
+watch(koleksi, () => {
+  selectAll.value = false
+})
+
+// Toggle select all items
+const toggleSelectAll = () => {
+  if (selectAll.value) {
+    selectedItems.value = koleksi.value.map(item => item.id)
+  } else {
+    selectedItems.value = []
+  }
+}
+
+// Modify the markSelectedAsBest function to show confirmation modal
+const markSelectedAsBest = (markAsBest = true) => {
+  if (selectedItems.value.length === 0) return
   
-  const router = useRouter();
-  const authStore = useAdminAuthStore();
-  
-  const pageTitle = ref('Tabel Koleksi');
-  
-  // Di parent component (Layout Admin)
-  const showSidebar = ref(false);
-  
-  const toggleSidebar = () => {
-    showSidebar.value = !showSidebar.value;
-  };
-  
-  // State for collections
-  const koleksi = ref([]);
-  const isLoading = ref(false);
-  const errorMessage = ref("");
-  const currentPage = ref(1);
-  const perPage = ref(10);
-  const total = ref(0);
-  const lastPage = ref(1);
-  const nextPageUrl = ref(null);
-  const prevPageUrl = ref(null);
-  
-  // State for filters
-  const searchQuery = ref("");
-  const selectedKategori = ref([]);
-  const selectedJenisDokumen = ref([]);
-  const sortBy = ref("terbaru");
-  const isFilterModalOpen = ref(false);
-  const searchKategori = ref("");
-  const searchJenisDokumen = ref("");
-  const kategoriList = ref([]);
-  const jenisDokumenList = ref([]);
-  
-  // State for selection
-  const selectedItems = ref([]);
-  const selectAll = ref(false);
-  
-  // Authentication check
-  const checkAuth = async () => {
-    await authStore.init();
+  if (markAsBest) {
+    showMarkBestModal.value = true
+  } else {
+    showUnmarkBestModal.value = true
+  }
+}
+
+// Confirm mark as best
+const confirmMarkBest = async (markAsBest = true) => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  try {
+    isMarking.value = true
     
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return false;
-    }
-  
-    try {
-      const isValid = await authStore.verifyToken();
-      if (!isValid) {
-        alert('Sesi telah berakhir, silakan login kembali');
-        await authStore.logout();
-        router.push('/admin/auth/login');
-        return false;
-      }
-      return true;
-    } catch (error) {
-      console.error('Authentication error:', error);
-      alert('Terjadi kesalahan saat verifikasi sesi');
-      await authStore.logout();
-      router.push('/admin/auth/login');
-      return false;
-    }
-  };
-  
-  // Watch for changes in the collection data to reset selectAll
-  watch(koleksi, () => {
-    selectAll.value = false;
-  });
-  
-  // Toggle select all items
-  const toggleSelectAll = () => {
-    if (selectAll.value) {
-      selectedItems.value = koleksi.value.map(item => item.id);
-    } else {
-      selectedItems.value = [];
-    }
-  };
-  
-  // Mark selected items as best collection
-  const markSelectedAsBest = async (markAsBest = true) => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return;
-    }
-  
-    try {
-      isLoading.value = true;
-      
-      const endpoint = markAsBest ? 'mark-as-best' : 'unmark-as-best';
-      
-      await Promise.all(
-        selectedItems.value.map(id => 
-          axios.post(`http://localhost:8000/api/koleksi/${id}/${endpoint}`, {}, {
-            headers: {
-              'Authorization': `Bearer ${authStore.token}`
-            }
-          })
-        )
-      );
-      
-      await fetchKoleksi(currentPage.value);
-      selectedItems.value = [];
-      selectAll.value = false;
-      
-      alert(`Selected items have been ${markAsBest ? 'marked as' : 'removed from'} best collections`);
-    } catch (error) {
-      console.error("Error updating best collection status:", error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
-        await authStore.logout();
-        router.push('/admin/auth/login');
-      } else {
-        alert(`Failed to ${markAsBest ? 'mark' : 'unmark'} items as best collections`);
-      }
-    } finally {
-      isLoading.value = false;
-    }
-  };
-  
-  // Remove single item from best collection
-  const unmarkAsBest = async (id) => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return;
-    }
-  
-    if (confirm('Are you sure you want to remove this collection from Best Collections?')) {
-      try {
-        await axios.post(`http://localhost:8000/api/koleksi/${id}/unmark-as-best`, {}, {
+    const endpoint = markAsBest ? 'mark-as-best' : 'unmark-as-best'
+    const successMessage = markAsBest 
+      ? 'Koleksi berhasil ditandai sebagai Best Collection' 
+      : 'Koleksi berhasil dihapus dari Best Collection'
+    
+    await Promise.all(
+      selectedItems.value.map(id => 
+        axios.post(`http://localhost:8000/api/koleksi/${id}/${endpoint}`, {}, {
           headers: {
             'Authorization': `Bearer ${authStore.token}`
           }
-        });
-        await fetchKoleksi(currentPage.value);
-        alert('Collection removed from Best Collections');
-      } catch (error) {
-        console.error("Error removing from best collection:", error);
-        if (error.response?.status === 401) {
-          alert('Sesi telah berakhir, silakan login kembali');
-          await authStore.logout();
-          router.push('/admin/auth/login');
-        } else {
-          alert('Failed to remove from Best Collections');
-        }
+        })
+      )
+    )
+    
+    await fetchKoleksi(currentPage.value)
+    selectedItems.value = []
+    selectAll.value = false
+    
+    showToast('success', successMessage)
+  } catch (error) {
+    console.error("Error updating best collection status:", error)
+    showToast('error', 'Gagal memperbarui status Best Collection')
+    if (error.response?.status === 401) {
+      await authStore.logout()
+      await navigateTo('/auth/login')
+    }
+  } finally {
+    isMarking.value = false
+    showMarkBestModal.value = false
+    showUnmarkBestModal.value = false
+  }
+}
+
+// Cancel mark as best
+const cancelMarkBest = () => {
+  showMarkBestModal.value = false
+  isMarking.value = false
+}
+
+// Cancel unmark as best
+const cancelUnmarkBest = () => {
+  showUnmarkBestModal.value = false
+  isMarking.value = false
+}
+
+// Modify unmarkAsBest to show confirmation modal
+const unmarkAsBest = (id) => {
+  itemToMark.value = id
+  showUnmarkSingleModal.value = true
+}
+
+// Confirm unmark single item
+const confirmUnmarkSingle = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  try {
+    isMarking.value = true
+    await axios.post(`http://localhost:8000/api/koleksi/${itemToMark.value}/unmark-as-best`, {}, {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
       }
+    })
+    await fetchKoleksi(currentPage.value)
+    showToast('success', 'Koleksi berhasil dihapus dari Best Collections')
+  } catch (error) {
+    console.error("Error removing from best collection:", error)
+    showToast('error', 'Gagal menghapus dari Best Collections')
+    if (error.response?.status === 401) {
+      await authStore.logout()
+      await navigateTo('/auth/login')
     }
-  };
-  
-  // Function to fetch collections with filters
-  const fetchKoleksi = async (page = 1) => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return;
+  } finally {
+    isMarking.value = false
+    showUnmarkSingleModal.value = false
+    itemToMark.value = null
+  }
+}
+
+// Cancel unmark single
+const cancelUnmarkSingle = () => {
+  showUnmarkSingleModal.value = false
+  itemToMark.value = null
+}
+
+// Function to fetch collections with filters
+const fetchKoleksi = async (page = 1) => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  try {
+    isLoading.value = true
+    const params = {
+      page,
+      per_page: perPage.value,
+      search: searchQuery.value,
+      kategori: selectedKategori.value,
+      jenisDokumen: selectedJenisDokumen.value,
+      sort_by: sortBy.value,
     }
-  
-    try {
-      isLoading.value = true;
-      const params = {
-        page,
-        per_page: perPage.value,
-        search: searchQuery.value,
-        kategori: selectedKategori.value,
-        jenisDokumen: selectedJenisDokumen.value,
-        sort_by: sortBy.value,
-      };
-  
-      const res = await axios.get("http://localhost:8000/api/koleksi/filter", { 
-        params,
+
+    const res = await axios.get("http://localhost:8000/api/koleksi/filter", { 
+      params,
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      },
+      paramsSerializer: params => {
+        return Object.entries(params)
+          .map(([key, value]) => {
+            if (Array.isArray(value)) {
+              return value.map(v => `${key}[]=${v}`).join('&')
+            }
+            return `${key}=${value}`
+          })
+          .join('&')
+      }
+    })
+    
+    koleksi.value = res.data.data
+    currentPage.value = res.data.current_page
+    total.value = res.data.total
+    lastPage.value = res.data.last_page
+    nextPageUrl.value = res.data.next_page_url
+    prevPageUrl.value = res.data.prev_page_url
+  } catch (error) {
+    console.error("Failed to fetch collections:", error)
+    if (error.response?.status === 401) {
+      alert('Sesi telah berakhir, silakan login kembali')
+      await authStore.logout()
+      await navigateTo('/auth/login')
+    } else {
+      errorMessage.value = "Failed to load collections"
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Apply filters and close modal
+const applyFilters = () => {
+  fetchKoleksi(1)
+  closeFilterModal()
+}
+
+// Open filter modal
+const openFilterModal = () => {
+  isFilterModalOpen.value = true
+}
+
+// Close filter modal
+const closeFilterModal = () => {
+  isFilterModalOpen.value = false
+}
+
+// Navigate to next page
+const goToNextPage = () => {
+  if (nextPageUrl.value) {
+    fetchKoleksi(currentPage.value + 1)
+  }
+}
+
+// Navigate to previous page
+const goToPrevPage = () => {
+  if (prevPageUrl.value) {
+    fetchKoleksi(currentPage.value - 1)
+  }
+}
+
+// Fetch categories and document types
+const fetchKategoriAndJenisDokumen = async () => {
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return
+  }
+
+  try {
+    const [kategoriRes, jenisDokumenRes] = await Promise.all([
+      axios.get("http://localhost:8000/api/kategori-bang-kom", {
         headers: {
           'Authorization': `Bearer ${authStore.token}`
-        },
-        paramsSerializer: params => {
-          return Object.entries(params)
-            .map(([key, value]) => {
-              if (Array.isArray(value)) {
-                return value.map(v => `${key}[]=${v}`).join('&');
-              }
-              return `${key}=${value}`;
-            })
-            .join('&');
         }
-      });
-      
-      koleksi.value = res.data.data;
-      currentPage.value = res.data.current_page;
-      total.value = res.data.total;
-      lastPage.value = res.data.last_page;
-      nextPageUrl.value = res.data.next_page_url;
-      prevPageUrl.value = res.data.prev_page_url;
-    } catch (error) {
-      console.error("Failed to fetch collections:", error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
-        await authStore.logout();
-        router.push('/admin/auth/login');
-      } else {
-        errorMessage.value = "Failed to load collections";
+      }),
+      axios.get("http://localhost:8000/api/jenis-dokumen", {
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`
+        }
+      }),
+    ])
+    kategoriList.value = kategoriRes.data.data
+    jenisDokumenList.value = jenisDokumenRes.data.data
+  } catch (error) {
+    console.error("Failed to fetch categories or document types:", error)
+    if (error.response?.status === 401) {
+      alert('Sesi telah berakhir, silakan login kembali')
+      await authStore.logout()
+      await navigateTo('/auth/login')
+    }
+  }
+}
+
+// Computed for filtered categories
+const filteredKategoriList = computed(() => {
+  return kategoriList.value.filter(kategori =>
+    kategori.nama.toLowerCase().includes(searchKategori.value.toLowerCase())
+  )
+})
+
+// Computed for filtered document types
+const filteredJenisDokumenList = computed(() => {
+  return jenisDokumenList.value.filter(jenis =>
+    jenis.nama.toLowerCase().includes(searchJenisDokumen.value.toLowerCase())
+  )
+})
+
+// Add formatDate function
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  const options = { year: 'numeric', month: 'short', day: 'numeric' }
+  return new Date(dateString).toLocaleDateString('id-ID', options)
+}
+
+// Modify viewContent function to handle both PDF and YouTube
+const viewContent = (item) => {
+  if (item.youtube_link) {
+    // Open YouTube link in new tab
+    window.open(item.youtube_link, '_blank')
+  } else if (item.dokumen_pdf) {
+    // View PDF
+    viewPdf(item.id)
+  } else {
+    showToast('warning', 'Tidak ada konten yang tersedia untuk koleksi ini')
+  }
+}
+
+// View PDF function
+const viewPdf = async (id) => {
+  try {
+    // Check authentication
+    if (!authStore.isAuthenticated) {
+      alert('Anda harus login terlebih dahulu')
+      return navigateTo('/auth/login')
+    }
+
+    // Verify token
+    const isValid = await authStore.checkAuthStatus()
+    if (!isValid) {
+      await authStore.logout()
+      return navigateTo('/auth/login')
+    }
+
+    // Make the request
+    navigateTo(`/admin/pdf-view2/${id}`)
+
+  } catch (error) {
+    console.error('Error:', error)
+    alert(errorMessage)
+  }
+}
+
+// Fungsi untuk membuka modal konfirmasi
+const confirmDelete = (id) => {
+  itemToDelete.value = id
+  showDeleteModal.value = true
+}
+
+// Fungsi untuk membatalkan penghapusan
+const cancelDelete = () => {
+  showDeleteModal.value = false
+  itemToDelete.value = null
+}
+
+// Fungsi utama untuk menghapus koleksi
+const deleteKoleksi = async () => {
+  if (!itemToDelete.value) return
+  
+  isDeleting.value = true
+  try {
+    await axios.delete(`http://localhost:8000/api/koleksi/${itemToDelete.value}`, {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
       }
-    } finally {
-      isLoading.value = false;
-    }
-  };
-  
-  // Apply filters and close modal
-  const applyFilters = () => {
-    fetchKoleksi(1);
-    closeFilterModal();
-  };
-  
-  // Open filter modal
-  const openFilterModal = () => {
-    isFilterModalOpen.value = true;
-  };
-  
-  // Close filter modal
-  const closeFilterModal = () => {
-    isFilterModalOpen.value = false;
-  };
-  
-  // Navigate to next page
-  const goToNextPage = () => {
-    if (nextPageUrl.value) {
-      fetchKoleksi(currentPage.value + 1);
-    }
-  };
-  
-  // Navigate to previous page
-  const goToPrevPage = () => {
-    if (prevPageUrl.value) {
-      fetchKoleksi(currentPage.value - 1);
-    }
-  };
-  
-  // Fetch categories and document types
-  const fetchKategoriAndJenisDokumen = async () => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return;
-    }
-  
-    try {
-      const [kategoriRes, jenisDokumenRes] = await Promise.all([
-        axios.get("http://localhost:8000/api/kategori-bang-kom", {
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`
-          }
-        }),
-        axios.get("http://localhost:8000/api/jenis-dokumen", {
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`
-          }
-        }),
-      ]);
-      kategoriList.value = kategoriRes.data.data;
-      jenisDokumenList.value = jenisDokumenRes.data.data;
-    } catch (error) {
-      console.error("Failed to fetch categories or document types:", error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
-        await authStore.logout();
-        router.push('/admin/auth/login');
-      }
-    }
-  };
-  
-  // Computed for filtered categories
-  const filteredKategoriList = computed(() => {
-    return kategoriList.value.filter(kategori =>
-      kategori.nama.toLowerCase().includes(searchKategori.value.toLowerCase())
-    );
-  });
-  
-  // Computed for filtered document types
-  const filteredJenisDokumenList = computed(() => {
-    return jenisDokumenList.value.filter(jenis =>
-      jenis.nama.toLowerCase().includes(searchJenisDokumen.value.toLowerCase())
-    );
-  });
-  
-  // View PDF function
-  const viewPdf = async (id) => {
+    })
     
-    try {
-      // Check authentication
-      if (!authStore.isLoggedIn) {
-        alert('Anda harus login terlebih dahulu');
-        return navigateTo('/admin/auth/login');
-      }
-  
-      // Verify token
-      const isValid = await authStore.verifyToken();
-      if (!isValid) {
-        await authStore.logout();
-        return navigateTo('/admin/auth/login');
-      }
-  
-      // Make the request
-      router.push(`/admin/pdf-view2/${id}`);
-  
-    } catch (error) {
-      console.error('Error:', error);
-      alert(errorMessage);
+    await fetchKoleksi(currentPage.value)
+    showToast('success', 'Koleksi berhasil dihapus')
+  } catch (error) {
+    console.error("Failed to delete collection:", error)
+    showToast('error', 'Gagal menghapus koleksi')
+    if (error.response?.status === 401) {
+      await authStore.logout()
+      await navigateTo('/auth/login')
     }
-  };
-  
-  // Delete collection function
-  const deleteKoleksi = async (event, id) => {
-    if (!authStore.isLoggedIn) {
-      router.push('/admin/auth/login');
-      return;
-    }
-  
-    if (confirm('Are you sure you want to delete this collection?')) {
-      try {
-        await axios.delete(`http://localhost:8000/api/koleksi/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`
-          }
-        });
-        await fetchKoleksi(currentPage.value);
-      } catch (error) {
-        console.error("Failed to delete collection:", error);
-        if (error.response?.status === 401) {
-          alert('Sesi telah berakhir, silakan login kembali');
-          await authStore.logout();
-          router.push('/admin/auth/login');
-        }
-      }
-    }
-  };
+  } finally {
+    isDeleting.value = false
+    showDeleteModal.value = false
+    itemToDelete.value = null
+  }
+}
   
   // Pengecekan awal saat komponen dimount
   onMounted(async () => {
@@ -832,4 +1160,10 @@ import { NuxtLink } from '#components';
       justify-content: flex-end;
     }
   }
+
+  .truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
   </style>

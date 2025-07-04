@@ -6,9 +6,9 @@
           <banner />
           
           <!-- Search Bar Section -->
-          <div class="relative w-full -translate-y-1/2">
+          <!-- <div class="relative w-full -translate-y-1/2">
             <search @search="handleSearch" />
-          </div>
+          </div> -->
         </div>
   
         <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
@@ -64,13 +64,12 @@
                 <!-- Author and Stats -->
                 <div class="flex flex-wrap items-center gap-8 text-sm text-gray-600 mb-3">
                   <div class="flex items-center">
-                    <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    <span v-if="koleksi.youtube_link">{{ koleksi.views }} kali dilihat</span>
-                    <span v-else-if="koleksi.dokumen_pdf">{{ koleksi.views }} kali dibaca</span>
-                  </div>
+  <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+  </svg>
+  <span>{{ koleksi.views ?? 0 }} kali {{ koleksi.youtube_link ? 'dilihat' : 'dibaca' }}</span>
+</div>
                   
                   <div class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -82,38 +81,39 @@
   
                 <!-- Action Buttons -->
                 <div class="flex flex-center space-x-2">
-                  <button 
-                    @click="toggleFavorite(koleksi.id)"
-                    class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      class="h-4 w-4 mr-1" 
-                      :class="{ 'text-yellow-500 fill-yellow-500': isFavorite(koleksi.id), 'text-gray-400': !isFavorite(koleksi.id) }" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                      fill="none"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
-                    Favorit
-                  </button>
-                  
-                  <button 
-                    @click="openShareModal(koleksi)"
-                    class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                      class="h-4 w-4 mr-1 text-gray-500" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                    </svg>
-                    Bagikan
-                  </button>
-                </div>
+<button 
+  @click="confirmToggleFavorite(koleksi.id)"
+  class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    class="h-4 w-4 mr-1" 
+    :class="{ 'text-yellow-500 fill-yellow-500': isFavorite(koleksi.id), 'text-gray-400': !isFavorite(koleksi.id) }" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+    fill="none"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+  </svg>
+  Favorit
+</button>
+
+<button 
+  @click="openShareModal(koleksi)"
+  class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    class="h-4 w-4 mr-1 text-gray-500" 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+  </svg>
+  Bagikan
+</button>
+</div>
   
                 <!-- Divider -->
                 <hr class="my-5 border-gray-200 mt-3 mb-3">
@@ -149,14 +149,14 @@
                     <div class="mt-4 flex items-center justify-between">
                       <div class="flex items-center space-x-4">
                         <button 
-                          @click="openYouTubeInNewTab"
-                          class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                          </svg>
-                          Buka di YouTube
-                        </button>
+  @click="openYouTubeWithTracking"
+  class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+  Buka di YouTube
+</button>
                       </div>
                     </div>
                   </div>
@@ -297,13 +297,7 @@
     :key="doc.id" 
     class="group p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border border-gray-200"
   >
-    <NuxtLink :to="`/detail/${doc.id}`" class="block">
-      <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
-        {{ doc.judul }}
-      </h3>
-      <p class="text-sm text-gray-500 mt-1">Oleh: {{ doc.penulis }}</p>
-      
-      <div class="mt-2 flex flex-wrap items-center gap-2">
+  <div class="mt-2 flex flex-wrap items-center gap-2">
         <span v-if="doc.kategori !== '-'" 
               class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
           {{ doc.kategori }}
@@ -316,6 +310,11 @@
           {{ (doc.similarity_score * 100).toFixed(0) }}% match
         </span>
       </div>
+    <NuxtLink :to="`/detail/${doc.id}`" class="block">
+      <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+        {{ doc.judul }}
+      </h3>
+      <p class="text-sm text-gray-500 mt-1">Oleh: {{ doc.penulis }}</p>
       
       <div class="mt-2 flex items-center text-sm text-blue-600">
         Lihat detail
@@ -335,7 +334,7 @@
           </div>
         </main>
   
-        <!-- Update the Share Modal section in your template -->
+        <!-- Share Modal -->
 <div v-if="showShareModal" class="fixed inset-0 overflow-y-auto z-50">
   <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
     <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -369,15 +368,16 @@
                 <p class="text-sm text-gray-500 mb-3">Bagikan melalui:</p>
                 <div class="flex space-x-4">
                   <!-- WhatsApp -->
-                  <button 
-                    @click="shareViaWhatsApp"
-                    class="inline-flex items-center justify-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
-                    title="Bagikan via WhatsApp"
-                  >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29 3.617c-.545 1.514-1.656 2.813-3.172 3.402-1.204.468-2.356.404-3.05-.197-.748-.648-.813-1.845-.289-3.52l.001-.004c.085-.25.434-1.204.434-1.204s-.22-.713-.22-1.396c0-1.38.763-2.41 1.712-2.41.446 0 .745.275.745.756 0 .38-.158 1.044-.24 1.632-.082.588-.166 1.195-.093 1.644.16.996.69 1.687 1.275 2.246.59.563 1.34.88 1.834 1.112.38.175.724.149.991-.089.277-.246.31-.694.232-1.215M12 22a9.965 9.965 0 01-5.33-1.547 1.324 1.324 0 00-.94-.343 1.06 1.06 0 00-.684.343l-.38.38a1.324 1.324 0 01-.94.343 1.06 1.06 0 01-.684-.343A9.965 9.965 0 012 12a9.96 9.96 0 013.471-7.55 1.324 1.324 0 00.343-.94 1.06 1.06 0 00-.343-.684l-.38-.38a1.324 1.324 0 01-.343-.94 1.06 1.06 0 01.343-.684A9.965 9.965 0 0112 2a9.96 9.96 0 017.55 3.471 1.324 1.324 0 00.94.343 1.06 1.06 0 00.684-.343l.38-.38a1.324 1.324 0 01.94-.343 1.06 1.06 0 01.684.343A9.965 9.965 0 0122 12a9.96 9.96 0 01-3.471 7.55 1.324 1.324 0 00-.343.94 1.06 1.06 0 00.343.684l.38.38a1.324 1.324 0 01.343.94 1.06 1.06 0 01-.343.684A9.965 9.965 0 0112 22z"/>
-                    </svg>
-                  </button>
+                  <!-- WhatsApp -->
+<button 
+  @click="shareViaWhatsApp"
+  class="inline-flex items-center justify-center p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
+  title="Bagikan via WhatsApp"
+>
+  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.484 3.488"/>
+  </svg>
+</button>
                   
                   <!-- Twitter -->
                   <button 
@@ -389,29 +389,6 @@
                       <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
                     </svg>
                   </button>
-                  
-                  <!-- Facebook -->
-                  <!-- <button 
-                    @click="shareViaFacebook"
-                    class="inline-flex items-center justify-center p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                    title="Bagikan via Facebook"
-                  >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"/>
-                    </svg>
-                  </button> -->
-                  
-                  <!-- Email -->
-                  <!-- <button 
-                    @click="shareViaEmail"
-                    class="inline-flex items-center justify-center p-2 rounded-full bg-gray-600 text-white hover:bg-gray-700 transition-colors"
-                    title="Bagikan via Email"
-                  >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/>
-                      <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/>
-                    </svg>
-                  </button> -->
                   
                   <!-- Telegram -->
                   <button 
@@ -442,6 +419,48 @@
   </div>
 </div>
       </NuxtLayout>
+
+      <!-- Delete Confirmation Modal -->
+<div v-if="showDeleteModal" class="fixed inset-0 overflow-y-auto z-50">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+      <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelDelete"></div>
+    </div>
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus dari favorit</h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus koleksi ini dari daftar favorit?</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button 
+          @click="handleDeleteConfirm"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+        >
+          Hapus
+        </button>
+        <button 
+          @click="handleDeleteCancel"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+        >
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<Toast />
     </div>
   </template>
     
@@ -449,12 +468,19 @@
     import { ref, onMounted } from 'vue';
     import { useRoute } from 'vue-router';
     import axios from 'axios';
+    import { useToast } from '~/composables/useToast';
     
+    useHead({
+  title: 'Detail Koleksi - Sistem Repositori Pusdiklat BPS'
+})
+
+    const { showToast } = useToast();
     const route = useRoute();
     
     // Data koleksi
     const koleksi = ref({});
-  
+  const showDeleteModal = ref(false);
+const koleksiToDelete = ref(null);
     // Data rekomendasi dokumen
     // const recommendedDocs = ref([
     //   { id: 1, title: "Analisis Data Statistik dengan Python", author: "Jane Doe" },
@@ -597,7 +623,7 @@ const getKoleksiDetail = async () => {
     console.error('Gagal mengambil data koleksi:', error);
     errorMessage.value = 'Gagal memuat data koleksi';
     if ($toast) {
-      $toast.error('Gagal memuat data koleksi');
+      showToast('error', 'Gagal memuat data koleksi');
     }
   } finally {
     isLoading.value = false;
@@ -708,6 +734,19 @@ const openYouTubeInNewTab = () => {
   window.open(youtubeData.value.watch_url, '_blank');
 };
   
+const openYouTubeWithTracking = async () => {
+  try {
+    // Track view first
+    await trackYoutubeView();
+    // Then open YouTube
+    openYouTubeInNewTab();
+  } catch (error) {
+    console.error('Error tracking YouTube view:', error);
+    // Fallback to just opening YouTube if tracking fails
+    openYouTubeInNewTab();
+  }
+};
+
 //   const viewPdf = async (id) => {
 //   const authStore = useAuthStore();
 //   const { $toast } = useNuxtApp();
@@ -753,9 +792,7 @@ const openYouTubeInNewTab = () => {
 // };
     
 const checkAuthBeforeView = async (id) => {
-  const authStore = useAuthStore();
-  
-  if (!authStore.isLoggedIn) {
+  if (!authStore.isAuthenticated) {
     const confirmed = confirm('Anda harus login terlebih dahulu untuk membaca dokumen. Apakah Anda ingin login sekarang?');
     if (confirmed) {
       return navigateTo('/auth/login');
@@ -763,7 +800,6 @@ const checkAuthBeforeView = async (id) => {
     return;
   }
 
-  // Buka PDF dengan endpoint yang benar
   const timestamp = Date.now();
   const pdfUrl = `/detail/pdf-view/${id}?t=${timestamp}`;
   window.open(pdfUrl, '_blank');
@@ -789,7 +825,7 @@ const viewPdf = async (id) => {
     
   } catch (error) {
     console.error('Error:', error);
-    $toast.error('Terjadi kesalahan saat membuka dokumen');
+    showToast('error', 'Terjadi kesalahan saat membuka dokumen');
   }
 };
 
@@ -812,11 +848,10 @@ const viewPdf = async (id) => {
   
   //tambahan
   
-  import { useAuthStore } from '~/stores/auth';
-  
-  
+  import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+
+  const authStore = useUnifiedAuthStore()
   const router = useRouter();
-  const authStore = useAuthStore();
   const { $toast } = useNuxtApp();
   
   // Data states
@@ -839,31 +874,86 @@ const youtubeError = ref(null);
   // Favorite functions
   const isFavorite = (koleksiId) => favorites.value[koleksiId] || false;
   
-  const toggleFavorite = async (koleksiId) => {
-    if (!authStore.isLoggedIn) {
-      $toast.warning('Silakan masuk terlebih dahulu untuk menambahkan ke favorit');
-      return router.push('/auth/login');
+  // Function to toggle favorite status
+// Update the toggleFavorite function to use confirmation modal
+const confirmToggleFavorite = async (koleksiId) => {
+  if (!authStore.isAuthenticated) {
+    showToast('warning', 'Silakan masuk terlebih dahulu untuk menambahkan ke favorit');
+    await navigateTo('/auth/login');
+    return;
+  }
+
+  if (isFavorite(koleksiId)) {
+    showDeleteModal.value = true;
+    koleksiToDelete.value = koleksiId;
+  } else {
+    await toggleFavorite(koleksiId);
+  }
+};
+
+const handleDeleteConfirm = async () => {
+  if (koleksiToDelete.value) {
+    await toggleFavorite(koleksiToDelete.value);
+    koleksiToDelete.value = null;
+    showDeleteModal.value = false;
+  }
+};
+
+const handleDeleteCancel = () => {
+  koleksiToDelete.value = null;
+  showDeleteModal.value = false;
+};
+
+// Update the existing toggleFavorite function
+const toggleFavorite = async (koleksiId) => {
+  try {
+    if (isFavorite(koleksiId)) {
+      await axios.delete(`http://localhost:8000/api/favorit/by-koleksi/${koleksiId}`, {
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      });
+      favorites.value[koleksiId] = false;
+      showToast('success', 'Koleksi dihapus dari favorit');
+    } else {
+      await axios.post('http://localhost:8000/api/favorit', {
+        koleksi_id: koleksiId
+      }, {
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      });
+      favorites.value[koleksiId] = true;
+      showToast('success', 'Koleksi ditambahkan ke favorit');
     }
-  
-    try {
-      if (isFavorite(koleksiId)) {
-        await axios.delete(`http://localhost:8000/api/favorit/by-koleksi/${koleksiId}`, {
-          headers: { Authorization: `Bearer ${authStore.token}` }
-        });
-        favorites.value[koleksiId] = false;
-        $toast.success('Koleksi dihapus dari favorit');
-      } else {
-        await axios.post('http://localhost:8000/api/favorit', { koleksi_id: koleksiId }, {
-          headers: { Authorization: `Bearer ${authStore.token}` }
-        });
-        favorites.value[koleksiId] = true;
-        $toast.success('Koleksi ditambahkan ke favorit');
-      }
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      $toast.error('Gagal mengubah status favorit');
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    if (error.response?.status === 401) {
+      await authStore.logout();
+      await navigateTo('/auth/login');
     }
-  };
+    showToast('error', 'Gagal mengubah status favorit');
+  }
+};
+
+// Load favorites on component mount
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    await loadFavorites();
+  }
+});
+
+// Function to load favorites
+const loadFavorites = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/favorit', {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    });
+    if (response.data.success) {
+      response.data.data.forEach(item => {
+        favorites.value[item.koleksi_id] = true;
+      });
+    }
+  } catch (error) {
+    console.error('Error loading favorites:', error);
+  }
+};
 
   // Add these methods to your script setup
 const shareViaWhatsApp = () => {
@@ -897,38 +987,37 @@ const shareViaTelegram = () => {
 };
   
   // Save functions
-  const toggleSave = async (koleksiId) => {
-    if (!authStore.isLoggedIn) {
-      $toast.warning('Silakan masuk terlebih dahulu untuk menyimpan koleksi');
-      return router.push('/auth/login');
-    }
+  // const toggleSave = async (koleksiId) => {
+  //   if (!authStore.isLoggedIn) {
+  //     showToast('warning', 'Silakan masuk terlebih dahulu untuk menyimpan koleksi');
+  //     return router.push('/auth/login');
+  //   }
   
-    try {
-      if (savedItems.value[koleksiId]) {
-        await axios.delete(`http://localhost:8000/api/simpan-koleksi/by-koleksi/${koleksiId}`, {
-          headers: { Authorization: `Bearer ${authStore.token}` }
-        });
-        savedItems.value[koleksiId] = false;
-        $toast.success('Koleksi dihapus dari simpan');
-      } else {
-        await axios.post('http://localhost:8000/api/simpan-koleksi', { koleksi_id: koleksiId }, {
-          headers: { Authorization: `Bearer ${authStore.token}` }
-        });
-        savedItems.value[koleksiId] = true;
-        $toast.success('Koleksi ditambahkan ke simpan');
-      }
-    } catch (error) {
-      console.error('Error toggling save:', error);
-      $toast.error('Gagal mengubah status simpan');
-    }
-  };
+  //   try {
+  //     if (savedItems.value[koleksiId]) {
+  //       await axios.delete(`http://localhost:8000/api/simpan-koleksi/by-koleksi/${koleksiId}`, {
+  //         headers: { Authorization: `Bearer ${authStore.token}` }
+  //       });
+  //       savedItems.value[koleksiId] = false;
+  //       showToast('success', 'Koleksi dihapus dari simpan');
+  //     } else {
+  //       await axios.post('http://localhost:8000/api/simpan-koleksi', { koleksi_id: koleksiId }, {
+  //         headers: { Authorization: `Bearer ${authStore.token}` }
+  //       });
+  //       savedItems.value[koleksiId] = true;
+  //       $toast.success('Koleksi ditambahkan ke simpan');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error toggling save:', error);
+  //     $toast.error('Gagal mengubah status simpan');
+  //   }
+  // };
   
   // Share functions
-  const openShareModal = (item) => {
-    selectedItem.value = item;
-    shareLink.value = `${window.location.origin}/detail/${item.id}`;
-    showShareModal.value = true;
-  };
+  const openShareModal = () => {
+  shareLink.value = `${window.location.origin}/detail/${route.params.id}`;
+  showShareModal.value = true;
+};
   
   const closeShareModal = () => {
     showShareModal.value = false;
@@ -937,7 +1026,7 @@ const shareViaTelegram = () => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareLink.value)
       .then(() => {
-        $toast.success('Tautan berhasil disalin');
+        showToast('success', 'Tautan berhasil disalin');
       })
       .catch(() => {
         // Fallback for older browsers
@@ -947,7 +1036,7 @@ const shareViaTelegram = () => {
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        $toast.success('Tautan berhasil disalin');
+        showToast('success', 'Tautan berhasil disalin');
       });
   };
   
@@ -979,16 +1068,16 @@ const shareViaTelegram = () => {
       console.error('Error loading user collections:', error);
     }
   };
-  
-  // Initialize
-  onMounted(async () => {
-    await authStore.init();
-    await getKoleksiDetail();
-    await fetchRecommendations();
-    if (authStore.isLoggedIn) {
-      await loadUserCollections();
-    }
-  });
+
+  // Update onMounted
+onMounted(async () => {
+  await authStore.initializeAuth();
+  await getKoleksiDetail();
+  await fetchRecommendations();
+  if (authStore.isAuthenticated) {
+    await loadUserCollections();
+  }
+});
   
   // Watch for auth changes
   watch(() => authStore.isLoggedIn, async (loggedIn) => {

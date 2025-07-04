@@ -1,20 +1,14 @@
-import { defineNuxtRouteMiddleware } from "#app"
-import { useAuthStore } from "~/stores/auth"
-import { navigateTo } from "#app"
+export default defineNuxtRouteMiddleware(async (to) => {
+  if (process.server) return
+  
+  const authStore = useUnifiedAuthStore()
+  await authStore.initializeAuth()
 
-export default defineNuxtRouteMiddleware((to, from) => {
-  const authStore = useAuthStore()
-
-  // Initialize auth store
-  authStore.init()
-
-  // Check if user is logged in and is admin
-  if (!authStore.isLoggedIn) {
-    return navigateTo("/admin/auth/login")
-  }
-
-  if (!authStore.isAdmin) {
-    // User is logged in but not admin
-    return navigateTo("/admin/auth/login")
+  if (!authStore.isAuthenticated || !authStore.isAdmin) {
+    // Gunakan window.location untuk hard redirect jika diperlukan
+    if (process.client) {
+      window.location.href = '/auth/login'
+    }
+    return
   }
 })

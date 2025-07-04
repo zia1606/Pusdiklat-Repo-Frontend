@@ -7,28 +7,38 @@
   </template>
   
   <script setup>
-  import { useAuthStore } from '~/stores/auth'
-  const authStore = useAuthStore()
-  const route = useRoute()
-  
-  onMounted(async () => {
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+const authStore = useUnifiedAuthStore()
+const route = useRoute()
+
+onMounted(async () => {
+  try {
     const token = route.query.token
-    const user = route.query.user ? JSON.parse(route.query.user) : null
+    const user = route.query.user ? JSON.parse(decodeURIComponent(route.query.user)) : null
     
     if (token && user) {
-      authStore.setAuth({
+      await authStore.setAuth({
         token: token,
         user: {
           id: user.id,
           name: user.name,
           email: user.email,
-          avatar: user.avatar || 'https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp'
-        }
+          avatar: user.avatar,
+          role: {
+            name: user.role_id === 1 ? 'admin' : 'user'
+          }
+        },
+        role: user.role_id === 1 ? 'admin' : 'user'
       })
       
-      await navigateTo('/')
+      // Redirect based on role
+      await navigateTo(authStore.isAdmin ? '/admin/dashboard' : '/')
     } else {
-      await navigateTo('/login?error=Google login failed')
+      await navigateTo('/auth/login?error=invalid_google_response')
     }
-  })
-  </script>
+  } catch (error) {
+    console.error('Google login error:', error)
+    await navigateTo('/auth/login?error=google_login_failed')
+  }
+})
+</script>

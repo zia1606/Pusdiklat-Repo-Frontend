@@ -49,6 +49,10 @@
   <script setup>
 import { useRouter } from 'vue-router';
 
+useHead({
+  title: 'Beranda - Sistem Repositori Pusdiklat BPS'
+})
+
 const router = useRouter();
 
 // Fungsi untuk menangani pencarian

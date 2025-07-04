@@ -56,7 +56,7 @@
                                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                           </svg>
                                                       </button>
-                                                      <button @click="deleteKategori(item.id)" class="w-5 mr-2 cursor-pointer transform hover:text-red-500 hover:scale-110">
+                                                      <button @click="confirmDelete(item.id)" class="w-5 mr-2 cursor-pointer transform hover:text-red-500 hover:scale-110">
                                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                           </svg>
@@ -127,28 +127,163 @@
           </div>
       </div>
       </div>
+
+      <!-- Modal for Add and Edit -->
+      <div v-if="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75" @click="closeModal"></div>
+          </div>
+
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                  {{ isEditMode ? 'Edit Kategori' : 'Tambah Kategori' }}
+                  </h3>
+                  
+                  <form @submit.prevent="isEditMode ? updateKategori() : addKategori()">
+                  <div class="mb-6">
+                      <label class="block text-sm font-medium text-gray-700 mb-2" for="nama">Nama Kategori</label>
+                      <div class="relative">
+                      <input 
+                          v-model="form.nama" 
+                          type="text" 
+                          id="nama" 
+                          class="w-full pl-4 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Masukkan nama kategori"
+                      >
+                      </div>
+                  </div>
+
+                  <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                      <button
+                      type="submit"
+                      :disabled="isSubmitting"
+                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                      >
+                      <span v-if="!isSubmitting">{{ isEditMode ? 'Update' : 'Simpan' }}</span>
+                      <span v-else class="flex items-center">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Memproses...
+                      </span>
+                      </button>
+                      <button
+                      type="button"
+                      @click="closeModal"
+                      :disabled="isSubmitting"
+                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+                      >
+                      Batal
+                      </button>
+                  </div>
+                  </form>
+              </div>
+              </div>
+          </div>
+          </div>
+      </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div v-if="showDeleteModal" class="fixed inset-0 overflow-y-auto z-50">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75" @click="cancelDelete"></div>
+          </div>
+          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">Hapus Kategori</h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus kategori ini? Tindakan ini tidak dapat dibatalkan.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button 
+                @click="deleteKategori"
+                :disabled="isDeleting"
+                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+              >
+                <span v-if="!isDeleting">Hapus</span>
+                <span v-else class="flex items-center">
+                  <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Menghapus...
+                </span>
+              </button>
+              <button 
+                @click="cancelDelete"
+                :disabled="isDeleting"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Component -->
+      <Toast />
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
-import { useAdminAuthStore } from '@/stores/adminAuth';
+import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
+import { definePageMeta, navigateTo } from '#imports';
+import { $fetch } from 'ofetch';
 import Sidebar from '~/components/Admin/Sidebar.vue';
 import HeaderAdmin from '~/components/Admin/HeaderAdmin.vue';
+import { useToast } from '~/composables/useToast';
+
+useHead({
+  title: 'Kategori Kompetensi - Sistem Repositori Pusdiklat BPS'
+})
+
+const { showToast } = useToast();
 
 const router = useRouter();
-const authStore = useAdminAuthStore();
+const authStore = useUnifiedAuthStore();
 
 const showSidebar = ref(false);
 const kategori = ref([]);
 const distribusiKategori = ref([]);
 const isModalOpen = ref(false);
 const isEditMode = ref(false);
+const isSubmitting = ref(false);
 const form = ref({
   id: null,
   nama: ''
+});
+
+// State for delete confirmation modal
+const showDeleteModal = ref(false);
+const itemToDelete = ref(null);
+const isDeleting = ref(false);
+
+// Middleware untuk memastikan hanya admin yang bisa akses
+definePageMeta({
+  middleware: 'admin'
 });
 
 // Computed property untuk menggabungkan data kategori dengan jumlah koleksi
@@ -162,79 +297,88 @@ const kategoriWithCounts = computed(() => {
   });
 });
 
-// Authentication check
+// Authentication check menggunakan unified auth
 const checkAuth = async () => {
-await authStore.init();
-
-if (!authStore.isLoggedIn) {
-  router.push('/admin/auth/login');
-  return false;
-}
-
-try {
-  const isValid = await authStore.verifyToken();
-  if (!isValid) {
-    alert('Sesi telah berakhir, silakan login kembali');
-    await authStore.logout();
-    router.push('/admin/auth/login');
-    return false;
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login')
+    return false
   }
-  return true;
-} catch (error) {
-  console.error('Authentication error:', error);
-  alert('Terjadi kesalahan saat verifikasi sesi');
-  await authStore.logout();
-  router.push('/admin/auth/login');
-  return false;
+
+  if (!authStore.canAccessAdmin) {
+    showToast('error', 'Akses ditolak. Hanya admin yang dapat mengakses halaman ini.')
+    await navigateTo('/')
+    return false
+  }
+
+  try {
+    const isValid = await authStore.checkAuthStatus()
+    if (!isValid) {
+      showToast('warning', 'Sesi telah berakhir, silakan login kembali')
+      await navigateTo('/auth/login')
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error('Authentication error:', error)
+    showToast('error', 'Terjadi kesalahan saat verifikasi sesi')
+    await authStore.logout()
+    await navigateTo('/auth/login')
+    return false
+  }
 }
-};
 
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
 
 const fetchKategori = async () => {
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
     return;
   }
 
   try {
-      const response = await axios.get('http://localhost:8000/api/kategori-bang-kom', {
+      const response = await $fetch('http://localhost:8000/api/kategori-bang-kom', {
         headers: {
-          'Authorization': `Bearer ${authStore.token}`
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
         }
       });
-      kategori.value = response.data.data;
+      kategori.value = response.data;
   } catch (error) {
       console.error('Error fetching kategori:', error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
         await authStore.logout();
-        router.push('/admin/auth/login');
+        await navigateTo('/auth/login');
+      } else {
+        showToast('error', 'Gagal memuat data kategori');
       }
   }
 };
 
 const fetchDistribusiKategori = async () => {
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
     return;
   }
 
   try {
-      const response = await axios.get('http://localhost:8000/api/koleksi/distribusi-kategori', {
+      const response = await $fetch('http://localhost:8000/api/koleksi/distribusi-kategori', {
         headers: {
-          'Authorization': `Bearer ${authStore.token}`
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
         }
       });
-      distribusiKategori.value = response.data.data;
+      distribusiKategori.value = response.data;
   } catch (error) {
       console.error('Error fetching distribusi kategori:', error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
         await authStore.logout();
-        router.push('/admin/auth/login');
+        await navigateTo('/auth/login');
+      } else {
+        showToast('error', 'Gagal memuat distribusi kategori');
       }
   }
 };
@@ -256,102 +400,137 @@ const closeModal = () => {
 };
 
 const addKategori = async () => {
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
+    return;
+  }
+
+  if (!form.value.nama.trim()) {
+    showToast('warning', 'Nama kategori tidak boleh kosong');
     return;
   }
 
   try {
-      const response = await axios.post('http://localhost:8000/api/kategori-bang-kom', form.value, {
+      isSubmitting.value = true;
+      const response = await $fetch('http://localhost:8000/api/kategori-bang-kom', {
+        method: 'POST',
+        body: form.value,
         headers: {
-          'Authorization': `Bearer ${authStore.token}`
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
         }
       });
-      kategori.value.push(response.data.data);
+      kategori.value.push(response.data);
       closeModal();
-      alert('Kategori berhasil ditambahkan!');
-      // Refresh distribusi data setelah menambah kategori
+      showToast('success', 'Kategori berhasil ditambahkan');
       await fetchDistribusiKategori();
   } catch (error) {
       console.error('Error adding kategori:', error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
         await authStore.logout();
-        router.push('/admin/auth/login');
+        await navigateTo('/auth/login');
       } else {
-        alert('Gagal menambahkan kategori. Silakan coba lagi.'); 
+        showToast('error', 'Gagal menambahkan kategori'); 
       }
+  } finally {
+      isSubmitting.value = false;
   }
 };
 
 const updateKategori = async () => {
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
+    return;
+  }
+
+  if (!form.value.nama.trim()) {
+    showToast('warning', 'Nama kategori tidak boleh kosong');
     return;
   }
 
   try {
-      const response = await axios.put(`http://localhost:8000/api/kategori-bang-kom/${form.value.id}`, form.value, {
+      isSubmitting.value = true;
+      const response = await $fetch(`http://localhost:8000/api/kategori-bang-kom/${form.value.id}`, {
+        method: 'PUT',
+        body: form.value,
         headers: {
-          'Authorization': `Bearer ${authStore.token}`
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
         }
       });
       const index = kategori.value.findIndex(k => k.id === form.value.id);
-      kategori.value[index] = response.data.data;
+      kategori.value[index] = response.data;
       closeModal();
-      alert('Kategori berhasil diperbarui!');
-      // Refresh distribusi data setelah update kategori
+      showToast('success', 'Kategori berhasil diperbarui');
       await fetchDistribusiKategori();
   } catch (error) {
       console.error('Error updating kategori:', error);
-      if (error.response?.status === 401) {
-        alert('Sesi telah berakhir, silakan login kembali');
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
         await authStore.logout();
-        router.push('/admin/auth/login');
+        await navigateTo('/auth/login');
       } else {
-        alert('Gagal memperbarui kategori. Silakan coba lagi.');
+        showToast('error', 'Gagal memperbarui kategori');
       }
+  } finally {
+      isSubmitting.value = false;
   }
 };
 
-const deleteKategori = async (id) => {
-  if (!authStore.isLoggedIn) {
-    router.push('/admin/auth/login');
+const confirmDelete = (id) => {
+  itemToDelete.value = id;
+  showDeleteModal.value = true;
+};
+
+const cancelDelete = () => {
+  showDeleteModal.value = false;
+  itemToDelete.value = null;
+};
+
+const deleteKategori = async () => {
+  if (!itemToDelete.value) return;
+  
+  if (!authStore.isAuthenticated) {
+    await navigateTo('/auth/login');
     return;
   }
 
-  if (window.confirm('Apakah Anda yakin ingin menghapus kategori ini?')) {
-      try {
-          await axios.delete(`http://localhost:8000/api/kategori-bang-kom/${id}`, {
-            headers: {
-              'Authorization': `Bearer ${authStore.token}`
-            }
-          });
-          kategori.value = kategori.value.filter(k => k.id !== id);
-          alert('Kategori berhasil dihapus!');
-          // Refresh distribusi data setelah delete kategori
-          await fetchDistribusiKategori();
-      } catch (error) {
-          console.error('Error deleting kategori:', error);
-          if (error.response?.status === 401) {
-            alert('Sesi telah berakhir, silakan login kembali');
-            await authStore.logout();
-            router.push('/admin/auth/login');
-          } else {
-            alert('Gagal menghapus kategori. Silakan coba lagi.');
-          }
+  try {
+      isDeleting.value = true;
+      await $fetch(`http://localhost:8000/api/kategori-bang-kom/${itemToDelete.value}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`,
+          'Accept': 'application/json'
+        }
+      });
+      kategori.value = kategori.value.filter(k => k.id !== itemToDelete.value);
+      showDeleteModal.value = false;
+      showToast('success', 'Kategori berhasil dihapus');
+      await fetchDistribusiKategori();
+  } catch (error) {
+      console.error('Error deleting kategori:', error);
+      if (error.status === 401) {
+        showToast('warning', 'Sesi telah berakhir, silakan login kembali');
+        await authStore.logout();
+        await navigateTo('/auth/login');
+      } else {
+        showToast('error', 'Gagal menghapus kategori');
       }
+  } finally {
+      isDeleting.value = false;
+      itemToDelete.value = null;
   }
 };
 
 onMounted(async () => {
-const isAuthenticated = await checkAuth();
-if (!isAuthenticated) return;
+  const isAuthenticated = await checkAuth();
+  if (!isAuthenticated) return;
 
-// Fetch data kategori dan distribusi secara bersamaan
-await Promise.all([
-  fetchKategori(),
-  fetchDistribusiKategori()
-]);
+  await Promise.all([
+    fetchKategori(),
+    fetchDistribusiKategori()
+  ]);
 });
 </script>
