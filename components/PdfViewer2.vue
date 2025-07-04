@@ -154,7 +154,7 @@ const initPDFViewer = async () => {
       {
         path: '/pdfjsexpress', // Path ke folder PDF.js Express
         initialDoc: props.pdfUrl,
-        licenseKey: 'VMeLR5MsW5lX3X9YfqQF', // Ganti dengan license key Anda
+        licenseKey: '6y2mb6vTzXAQi79dyjig', // Ganti dengan license key Anda
       },
       viewer.value
     ).then((webViewerInstance) => {

@@ -165,6 +165,11 @@ onMounted(() => {
 // Handle manual login
 // Di script setup login.vue
 const handleLogin = async () => {
+  loading.value = true
+  resetErrors()
+  errorMessage.value = ''
+  successMessage.value = ''
+
   try {
     const response = await $fetch(`${apiBaseUrl}/api/login`, {
       method: 'POST',
@@ -186,7 +191,20 @@ const handleLogin = async () => {
       }
     }
   } catch (error) {
-    // Handle error
+    // Handle error response dari backend
+    if (error.data) {
+      if (error.data.message === 'Invalid email') {
+        errors.value.email = 'Email tidak valid'
+      } else if (error.data.message === 'Invalid Password') {
+        errors.value.password = 'Password tidak valid'
+      } else {
+        errorMessage.value = error.data.message || 'Terjadi kesalahan saat login'
+      }
+    } else {
+      errorMessage.value = 'Terjadi kesalahan pada server'
+    }
+  } finally {
+    loading.value = false
   }
 }
 
