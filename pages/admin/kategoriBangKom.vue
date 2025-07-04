@@ -255,7 +255,7 @@ import { $fetch } from 'ofetch';
 import Sidebar from '~/components/Admin/Sidebar.vue';
 import HeaderAdmin from '~/components/Admin/HeaderAdmin.vue';
 import { useToast } from '~/composables/useToast';
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Kategori Kompetensi - Sistem Repositori Pusdiklat BPS'
 })
@@ -338,7 +338,7 @@ const fetchKategori = async () => {
   }
 
   try {
-      const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom', {
+      const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
@@ -364,7 +364,7 @@ const fetchDistribusiKategori = async () => {
   }
 
   try {
-      const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/distribusi-kategori', {
+      const response = await $fetch(`${apiBaseUrl}/api/koleksi/distribusi-kategori`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
@@ -412,7 +412,7 @@ const addKategori = async () => {
 
   try {
       isSubmitting.value = true;
-      const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom', {
+      const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
         method: 'POST',
         body: form.value,
         headers: {
@@ -451,7 +451,7 @@ const updateKategori = async () => {
 
   try {
       isSubmitting.value = true;
-      const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom/${form.value.id}`, {
+      const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom/${form.value.id}`, {
         method: 'PUT',
         body: form.value,
         headers: {
@@ -498,7 +498,7 @@ const deleteKategori = async () => {
 
   try {
       isDeleting.value = true;
-      await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom/${itemToDelete.value}`, {
+      await $fetch(`${apiBaseUrl}/api/kategori-bang-kom/${itemToDelete.value}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${authStore.token}`,

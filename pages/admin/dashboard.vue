@@ -243,7 +243,7 @@ import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue'
 import StatCard from '@/components/Admin/StatCard.vue'
 // import Toast from '@/components/Toast.vue'
 // Di dashboard.vue
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Dashboard Admin - Sistem Repositori Pusdiklat BPS'
 })
@@ -405,25 +405,25 @@ const fetchStats = async () => {
 
   try {
     const [koleksiRes, bestRes, usersRes, viewsRes] = await Promise.all([
-      $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', {
+      $fetch(`${apiBaseUrl}/api/koleksi`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
         }
       }),
-      $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/best-collections', {
+      $fetch(`${apiBaseUrl}/api/koleksi/best-collections`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
         }
       }),
-      $fetch('https://pusdiklat-repo-backend.zeabur.app/api/users/count', {
+      $fetch(`${apiBaseUrl}/api/users/count`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
         }
       }),
-      $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/total-views', {
+      $fetch(`${apiBaseUrl}/api/koleksi/total-views`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
@@ -456,7 +456,7 @@ const fetchBestCollections = async () => {
 
   loadingBest.value = true
   try {
-    const res = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/best-collections', {
+    const res = await $fetch(`${apiBaseUrl}/api/koleksi/best-collections`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -498,7 +498,7 @@ const unmarkAsBest = async () => {
   }
 
   try {
-    await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${itemToUnmark.value}/unmark-as-best`, {
+    await $fetch(`${apiBaseUrl}/api/koleksi/${itemToUnmark.value}/unmark-as-best`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,

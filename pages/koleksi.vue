@@ -568,7 +568,7 @@ import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
 import debounce from 'lodash/debounce';
 import { useNuxtApp } from '#app';
 import { useToast } from '~/composables/useToast'
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Daftar Koleksi - Sistem Repositori Pusdiklat BPS'
 })
@@ -658,7 +658,7 @@ const checkSearchFromHome = () => {
 
 const getKategori = async () => {
   try {
-    const res = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom');
+    const res = await axios.get(`${apiBaseUrl}/api/kategori-bang-kom`);
     kategoriList.value = res.data.data;
   } catch (error) {
     console.error('Gagal mengambil data kategori:', error);
@@ -667,7 +667,7 @@ const getKategori = async () => {
 
 const getDocumentTypes = async () => {
   try {
-    const res = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen');
+    const res = await axios.get(`${apiBaseUrl}/api/jenis-dokumen`);
     documentTypes.value = res.data.data;
   } catch (error) {
     console.error('Gagal mengambil data jenis dokumen:', error);
@@ -676,7 +676,7 @@ const getDocumentTypes = async () => {
 
 const getYearRange = async () => {
   try {
-    const res = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/year-range');
+    const res = await axios.get(`${apiBaseUrl}/api/koleksi/year-range`);
     yearRange.value = {
       min: res.data.min_year,
       max: res.data.max_year,
@@ -729,7 +729,7 @@ const getKoleksi = async (overrideSearchQuery = null) => {
 
     console.log('📡 API call params:', params);
 
-    const res = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/filter', { params });
+    const res = await axios.get(`${apiBaseUrl}/api/koleksi/filter`, { params });
     koleksi.value = res.data;
     currentPage.value = res.data.current_page;
     total.value = res.data.total;
@@ -935,13 +935,13 @@ const handleDeleteCancel = () => {
 const toggleFavorite = async (koleksiId) => {
   try {
     if (isFavorite(koleksiId)) {
-      await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/favorit/by-koleksi/${koleksiId}`, {
+      await axios.delete(`${apiBaseUrl}/api/favorit/by-koleksi/${koleksiId}`, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
       favorites.value[koleksiId] = false
       showToast('success', 'Koleksi dihapus dari favorit')
     } else {
-      await axios.post('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
+      await axios.post(`${apiBaseUrl}/api/favorit`, {
         koleksi_id: koleksiId
       }, {
         headers: { Authorization: `Bearer ${authStore.token}` }
@@ -992,7 +992,7 @@ const loadFavorites = async () => {
   if (!authStore.isAuthenticated) return;
 
   try {
-    const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
+    const response = await axios.get(`${apiBaseUrl}/api/favorit`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     });
 

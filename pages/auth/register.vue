@@ -86,7 +86,7 @@
   import axios from 'axios'
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  
+  const { public: { apiBaseUrl } } = useRuntimeConfig();
   const router = useRouter()
   
   const form = ref({
@@ -113,7 +113,7 @@
     loading.value = true
     
     try {
-      const response = await axios.post('https://pusdiklat-repo-backend.zeabur.app/api/user/register', {
+      const response = await axios.post(`${apiBaseUrl}/api/user/register`, {
         name: form.value.name,
         email: form.value.email,
         password: form.value.password

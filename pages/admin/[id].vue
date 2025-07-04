@@ -354,6 +354,7 @@ import { useToast } from '~/composables/useToast'
 import Sidebar from '@/components/Admin/Sidebar.vue'
 import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue'
 
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Edit Koleksi - Sistem Repositori Pusdiklat BPS'
 })
@@ -462,7 +463,7 @@ onMounted(async () => {
 const getKoleksi = async (id) => {
   isLoading.value = true
   try {
-    const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${id}/edit`, {
+    const response = await $fetch(`${apiBaseUrl}/api/koleksi/${id}/edit`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -511,7 +512,7 @@ const fetchKategoriBangKom = async () => {
   }
 
   try {
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom', {
+    const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -537,7 +538,7 @@ const fetchJenisDokumen = async () => {
   }
 
   try {
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen', {
+    const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -673,7 +674,7 @@ const editKoleksi = async () => {
   }
 
   try {
-    const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${koleksiId.value}`, {
+    const response = await $fetch(`${apiBaseUrl}/api/koleksi/${koleksiId.value}`, {
       method: 'POST',
       body: formData,
       headers: {

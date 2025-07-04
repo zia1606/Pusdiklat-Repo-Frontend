@@ -50,7 +50,7 @@ import axios from 'axios';
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
 import { definePageMeta, navigateTo } from '#imports';
 import PdfViewer from '@/components/PdfViewer.vue'; // Adjust path as needed
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'PDF Admin - Sistem Repositori Pusdiklat BPS'
 })
@@ -129,7 +129,7 @@ const fetchPdf = async () => {
 
     // Fetch PDF with authentication headers
     const response = await axios.get(
-      `https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/pdf`, 
+      `${apiBaseUrl}/api/koleksi/${route.params.id}/pdf`, 
       {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,

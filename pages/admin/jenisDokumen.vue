@@ -200,7 +200,7 @@ import { $fetch } from 'ofetch';
 import Sidebar from '~/components/Admin/Sidebar.vue';
 import HeaderAdmin from '~/components/Admin/HeaderAdmin.vue';
 import { useToast } from '~/composables/useToast';
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Jenis Dokumen - Sistem Repositori Pusdiklat BPS'
 })
@@ -283,7 +283,7 @@ const fetchJenisDokumen = async () => {
     }
 
     try {
-        const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen', {
+        const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
           headers: {
             'Authorization': `Bearer ${authStore.token}`,
             'Accept': 'application/json'
@@ -309,7 +309,7 @@ const fetchDistribusiJenis = async () => {
   }
 
   try {
-      const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/distribusi-jenis', {
+      const response = await $fetch(`${apiBaseUrl}/api/koleksi/distribusi-jenis`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,
           'Accept': 'application/json'
@@ -357,7 +357,7 @@ const addJenisDokumen = async () => {
 
     try {
         isSubmitting.value = true;
-        const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen', {
+        const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
           method: 'POST',
           body: form.value,
           headers: {
@@ -396,7 +396,7 @@ const updateJenisDokumen = async () => {
 
     try {
         isSubmitting.value = true;
-        const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen/${form.value.id}`, {
+        const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen/${form.value.id}`, {
           method: 'PUT',
           body: form.value,
           headers: {
@@ -443,7 +443,7 @@ const deleteJenisDokumen = async () => {
 
   try {
       isDeleting.value = true;
-      await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen/${itemToDelete.value}`, {
+      await $fetch(`${apiBaseUrl}/api/jenis-dokumen/${itemToDelete.value}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${authStore.token}`,

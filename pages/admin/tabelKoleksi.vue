@@ -702,7 +702,7 @@ import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue'
 import { NuxtLink } from '#components'
 // Di bagian atas script setup
 import { useToast } from '~/composables/useToast'
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Kelola Koleksi - Sistem Repositori Pusdiklat BPS'
 })
@@ -835,7 +835,7 @@ const confirmMarkBest = async (markAsBest = true) => {
     
     await Promise.all(
       selectedItems.value.map(id => 
-        axios.post(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${id}/${endpoint}`, {}, {
+        axios.post(`${apiBaseUrl}/api/koleksi/${id}/${endpoint}`, {}, {
           headers: {
             'Authorization': `Bearer ${authStore.token}`
           }
@@ -889,7 +889,7 @@ const confirmUnmarkSingle = async () => {
 
   try {
     isMarking.value = true
-    await axios.post(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${itemToMark.value}/unmark-as-best`, {}, {
+    await axios.post(`${apiBaseUrl}/api/koleksi/${itemToMark.value}/unmark-as-best`, {}, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }
@@ -1110,7 +1110,7 @@ const deleteKoleksi = async () => {
   
   isDeleting.value = true
   try {
-    await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${itemToDelete.value}`, {
+    await axios.delete(`${apiBaseUrl}/api/koleksi/${itemToDelete.value}`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }

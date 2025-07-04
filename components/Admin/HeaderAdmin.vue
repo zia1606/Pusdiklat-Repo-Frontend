@@ -88,6 +88,8 @@
   import { ref, computed } from 'vue';
   import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
   
+  const { public: { apiBaseUrl } } = useRuntimeConfig();
+  
   const props = defineProps({
     pageTitle: {
       type: String,

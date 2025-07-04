@@ -371,7 +371,7 @@
   
   <script setup>
   import { ref, onMounted } from 'vue'
-  
+  const { public: { apiBaseUrl } } = useRuntimeConfig();
   // State
   const popularCollections = ref([])
   const bestCollections = ref([])
@@ -384,7 +384,7 @@
   const fetchPopularCollections = async () => {
     try {
       isLoadingPopular.value = true
-      const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', {
+      const response = await $fetch(`${apiBaseUrl}/api/koleksi`, {
         params: {
           sort_by: 'popular',
           per_page: 10
@@ -414,7 +414,7 @@
       isLoadingBest.value = true
       
       // Coba ambil best collection terlebih dahulu
-      const bestResponse = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/best-collections')
+      const bestResponse = await $fetch(`${apiBaseUrl}/api/koleksi/best-collections`)
       
       if (bestResponse.success && bestResponse.data.length > 0) {
         bestCollections.value = bestResponse.data.map(item => ({
@@ -430,7 +430,7 @@
         showingBestCollection.value = true
       } else {
         // Jika tidak ada best collection, ambil koleksi dengan favorit tertinggi
-        const favResponse = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/most-favorited')
+        const favResponse = await $fetch(`${apiBaseUrl}/api/koleksi/most-favorited`)
         
         if (favResponse.success) {
           mostFavorited.value = favResponse.data.map(item => ({

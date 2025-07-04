@@ -412,7 +412,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios'; // Tambahkan import axios
 import { useToast } from '~/composables/useToast'
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Koleksi Favorit - Sistem Repositori Pusdiklat BPS'
 })
@@ -485,7 +485,7 @@ const fetchFavorit = async () => {
   error.value = null
 
   try {
-    const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
+    const response = await axios.get(`${apiBaseUrl}/api/favorit`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }
@@ -533,7 +533,7 @@ const isFavorite = (koleksiId) => {
 const toggleFavorite = async (koleksiId) => {
   try {
     // Langsung hapus karena ini adalah halaman favorit
-    await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/favorit/by-koleksi/${koleksiId}`, {
+    await axios.delete(`${apiBaseUrl}/api/favorit/by-koleksi/${koleksiId}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     });
     
@@ -606,7 +606,7 @@ const loadFavorites = async () => {
   if (!authStore.isAuthenticated) return;
 
   try {
-    const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
+    const response = await axios.get(`${apiBaseUrl}/api/favorit`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     });
 
@@ -629,7 +629,7 @@ const removeFromFavorit = async (id) => {
   if (!confirm('Apakah Anda yakin ingin menghapus dari favorit?')) return;
 
   try {
-    await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/favorit/${id}`, {
+    await axios.delete(`${apiBaseUrl}/api/favorit/${id}`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }
@@ -713,7 +713,7 @@ const clearAllFavorit = async () => {
   try {
     isLoading.value = true
     for (const item of favorit.value) {
-      await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/favorit/${item.id}`, {
+      await axios.delete(`${apiBaseUrl}/api/favorit/${item.id}`, {
         headers: {
           'Authorization': `Bearer ${authStore.token}`
         }

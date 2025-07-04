@@ -62,14 +62,14 @@
   
   <script>
   import { ref, onMounted } from 'vue';
-  
+  const { public: { apiBaseUrl } } = useRuntimeConfig();
   export default {
     setup() {
       const categories = ref([]);
   
       const fetchCategoryDistribution = async () => {
         try {
-          const response = await fetch('http://127.0.0.1:8000/api/koleksi/distribusi-kategori');
+          const response = await fetch(`${apiBaseUrl}/api/koleksi/distribusi-kategori`);
           const data = await response.json();
           
           if (data.success) {

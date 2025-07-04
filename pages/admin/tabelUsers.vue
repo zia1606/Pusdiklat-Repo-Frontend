@@ -573,7 +573,7 @@ import HeaderAdmin from '@/components/Admin/HeaderAdmin.vue'
 import { NuxtLink } from '#components'
 import { useToast } from '~/composables/useToast'
 const { showToast } = useToast()
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Kelola Pengguna - Sistem Repositori Pusdiklat BPS'
 })
@@ -665,7 +665,7 @@ const handleRegisterAdmin = async () => {
     registerLoading.value = true
     registerError.value = ''
     
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/register/admin', {
+    const response = await $fetch(`${apiBaseUrl}/api/register/admin`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
@@ -738,7 +738,7 @@ const formatDate = (dateString) => {
 const fetchUsers = async () => {
   try {
     isLoading.value = true;
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/users', {
+    const response = await $fetch(`${apiBaseUrl}/api/users`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,

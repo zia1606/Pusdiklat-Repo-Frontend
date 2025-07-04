@@ -330,6 +330,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from '~/composables/useToast'
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 
 const authStore = useUnifiedAuthStore()
 const { showToast } = useToast()

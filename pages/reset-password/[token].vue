@@ -121,7 +121,7 @@ const form = ref({
   password: '',
   password_confirmation: ''
 })
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 // Validasi token saat page load
 onMounted(async () => {
   await validateToken()
@@ -132,7 +132,7 @@ const validateToken = async () => {
   errorMessage.value = ''
   
   try {
-    const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/validasi-forgot-password/${form.value.token}`)
+    const response = await $fetch(`${apiBaseUrl}/api/validasi-forgot-password/${form.value.token}`)
     
     console.log('Response validasi token:', response) // Debug
     
@@ -192,7 +192,7 @@ const handleResetPassword = async () => {
     
     console.log('Payload yang akan dikirim:', payload) // Debug
 
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/reset-password-act', {
+    const response = await $fetch(`${apiBaseUrl}/api/reset-password-act`, {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {

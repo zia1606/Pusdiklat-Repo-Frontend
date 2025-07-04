@@ -97,7 +97,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 import { $fetch } from 'ofetch'
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Login - Sistem Repositori Pusdiklat BPS'
 })
@@ -136,7 +136,7 @@ const loginWithGoogle = () => {
   googleLoading.value = true
   if (process.client) {
     const redirectUri = encodeURIComponent(window.location.origin + '/auth/callback')
-    window.location.href = `https://pusdiklat-repo-backend.zeabur.app/api/auth/google/redirect?redirect_uri=${redirectUri}`
+    window.location.href = `${apiBaseUrl}/api/auth/google/redirect?redirect_uri=${redirectUri}`
   }
 }
 
@@ -166,7 +166,7 @@ onMounted(() => {
 // Di script setup login.vue
 const handleLogin = async () => {
   try {
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/login', {
+    const response = await $fetch(`${apiBaseUrl}/api/login`, {
       method: 'POST',
       body: form.value
     })

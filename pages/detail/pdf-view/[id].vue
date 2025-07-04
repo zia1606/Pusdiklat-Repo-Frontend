@@ -40,7 +40,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 import PdfViewer from '~/components/PdfViewer.vue';
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'PDF - Sistem Repositori Pusdiklat BPS'
 })
@@ -67,8 +67,8 @@ const fetchPdf = async () => {
 
     const timestamp = Date.now();
     const url = authStore.isAuthenticated 
-      ? `https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
-      : `https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
+      ? `${apiBaseUrl}/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
+      : `${apiBaseUrl}/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
 
     const headers = {};
     if (authStore.isAuthenticated) {

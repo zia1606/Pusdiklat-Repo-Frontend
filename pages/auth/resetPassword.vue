@@ -57,7 +57,7 @@
 
 <script setup>
 import { ref } from 'vue'
-
+const { public: { apiBaseUrl } } = useRuntimeConfig();
 useHead({
   title: 'Reset Password - Sistem Repositori Pusdiklat BPS'
 })
@@ -76,7 +76,7 @@ const handleResetPassword = async () => {
   successMessage.value = ''
   
   try {
-    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/forgot-password-act', {
+    const response = await $fetch(`${apiBaseUrl}/api/forgot-password-act`, {
       method: 'POST',
       body: JSON.stringify(form.value),
       headers: {
