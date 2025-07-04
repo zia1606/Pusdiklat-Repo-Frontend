@@ -283,7 +283,7 @@ const fetchRiwayat = async () => {
   error.value = null;
 
   try {
-    const response = await $fetch('http://127.0.0.1:8000/api/riwayat-baca', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/riwayat-baca', {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       },
@@ -346,7 +346,7 @@ const deleteRiwayat = async () => {
   showDeleteModal.value = false
   
   try {
-    await $fetch(`http://127.0.0.1:8000/api/riwayat-baca/${itemToDelete.value}`, {
+    await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/riwayat-baca/${itemToDelete.value}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${authStore.token}`
@@ -377,7 +377,7 @@ const clearAllHistory = async () => {
   showClearAllModal.value = false
   
   try {
-    await $fetch('http://127.0.0.1:8000/api/riwayat-baca/clear', {
+    await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/riwayat-baca/clear', {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${authStore.token}`
@@ -415,7 +415,7 @@ const cancelClearAll = () => {
     const pdfViewerUrl = `/detail/pdf-view/${id}?t=${timestamp}`;
     
     try {
-      await axios.get(`http://127.0.0.1:8000/api/koleksi/koleksi/${id}/pdf`, {
+      await axios.get(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/koleksi/${id}/pdf`, {
         headers: { Authorization: `Bearer ${authStore.token}` },
         responseType: 'arraybuffer'
       });

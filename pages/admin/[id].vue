@@ -462,7 +462,7 @@ onMounted(async () => {
 const getKoleksi = async (id) => {
   isLoading.value = true
   try {
-    const response = await $fetch(`http://localhost:8000/api/koleksi/${id}/edit`, {
+    const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${id}/edit`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -511,7 +511,7 @@ const fetchKategoriBangKom = async () => {
   }
 
   try {
-    const response = await $fetch('http://localhost:8000/api/kategori-bang-kom', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom', {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -537,7 +537,7 @@ const fetchJenisDokumen = async () => {
   }
 
   try {
-    const response = await $fetch('http://localhost:8000/api/jenis-dokumen', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen', {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -673,7 +673,7 @@ const editKoleksi = async () => {
   }
 
   try {
-    const response = await $fetch(`http://localhost:8000/api/koleksi/${koleksiId.value}`, {
+    const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${koleksiId.value}`, {
       method: 'POST',
       body: formData,
       headers: {

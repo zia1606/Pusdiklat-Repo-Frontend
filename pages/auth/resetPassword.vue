@@ -76,7 +76,7 @@ const handleResetPassword = async () => {
   successMessage.value = ''
   
   try {
-    const response = await $fetch('http://127.0.0.1:8000/api/forgot-password-act', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/forgot-password-act', {
       method: 'POST',
       body: JSON.stringify(form.value),
       headers: {

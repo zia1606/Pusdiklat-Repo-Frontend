@@ -113,7 +113,7 @@
     loading.value = true
     
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/user/register', {
+      const response = await axios.post('https://pusdiklat-repo-backend.zeabur.app/api/user/register', {
         name: form.value.name,
         email: form.value.email,
         password: form.value.password

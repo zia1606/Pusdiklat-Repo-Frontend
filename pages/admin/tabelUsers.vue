@@ -665,7 +665,7 @@ const handleRegisterAdmin = async () => {
     registerLoading.value = true
     registerError.value = ''
     
-    const response = await $fetch('http://127.0.0.1:8000/api/register/admin', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/register/admin', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
@@ -738,7 +738,7 @@ const formatDate = (dateString) => {
 const fetchUsers = async () => {
   try {
     isLoading.value = true;
-    const response = await $fetch('http://127.0.0.1:8000/api/users', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/users', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,

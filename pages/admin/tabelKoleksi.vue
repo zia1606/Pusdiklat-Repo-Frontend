@@ -835,7 +835,7 @@ const confirmMarkBest = async (markAsBest = true) => {
     
     await Promise.all(
       selectedItems.value.map(id => 
-        axios.post(`http://localhost:8000/api/koleksi/${id}/${endpoint}`, {}, {
+        axios.post(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${id}/${endpoint}`, {}, {
           headers: {
             'Authorization': `Bearer ${authStore.token}`
           }
@@ -889,7 +889,7 @@ const confirmUnmarkSingle = async () => {
 
   try {
     isMarking.value = true
-    await axios.post(`http://localhost:8000/api/koleksi/${itemToMark.value}/unmark-as-best`, {}, {
+    await axios.post(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${itemToMark.value}/unmark-as-best`, {}, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }
@@ -934,7 +934,7 @@ const fetchKoleksi = async (page = 1) => {
       sort_by: sortBy.value,
     }
 
-    const res = await axios.get("http://localhost:8000/api/koleksi/filter", { 
+    const res = await axios.get("https://pusdiklat-repo-backend.zeabur.app/api/koleksi/filter", { 
       params,
       headers: {
         'Authorization': `Bearer ${authStore.token}`
@@ -1010,12 +1010,12 @@ const fetchKategoriAndJenisDokumen = async () => {
 
   try {
     const [kategoriRes, jenisDokumenRes] = await Promise.all([
-      axios.get("http://localhost:8000/api/kategori-bang-kom", {
+      axios.get("https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom", {
         headers: {
           'Authorization': `Bearer ${authStore.token}`
         }
       }),
-      axios.get("http://localhost:8000/api/jenis-dokumen", {
+      axios.get("https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen", {
         headers: {
           'Authorization': `Bearer ${authStore.token}`
         }
@@ -1110,7 +1110,7 @@ const deleteKoleksi = async () => {
   
   isDeleting.value = true
   try {
-    await axios.delete(`http://localhost:8000/api/koleksi/${itemToDelete.value}`, {
+    await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${itemToDelete.value}`, {
       headers: {
         'Authorization': `Bearer ${authStore.token}`
       }

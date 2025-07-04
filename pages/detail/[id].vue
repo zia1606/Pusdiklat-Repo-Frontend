@@ -498,7 +498,7 @@ const fetchRecommendations = async () => {
     loadingRecommendations.value = true;
     recommendationError.value = null;
     
-    const response = await axios.get(`http://localhost:8000/api/koleksi/${route.params.id}/recommendations`);
+    const response = await axios.get(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/recommendations`);
 
     console.log('API Response:', response.data); // Debugging
 
@@ -549,7 +549,7 @@ const fetchFallbackRecommendations = async () => {
   try {
     // Coba ambil berdasarkan kategori terlebih dahulu
     if (koleksi.value.kategori_bang_kom_id) {
-      const response = await axios.get('http://localhost:8000/api/koleksi', {
+      const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', {
         params: {
           kategori: koleksi.value.kategori_bang_kom_id,
           limit: 5,
@@ -573,7 +573,7 @@ const fetchFallbackRecommendations = async () => {
     }
     
     // Jika masih kosong, ambil koleksi terbaru
-    const latestResponse = await axios.get('http://localhost:8000/api/koleksi', {
+    const latestResponse = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', {
       params: {
         limit: 5,
         sort_by: 'terbaru',
@@ -605,7 +605,7 @@ const getKoleksiDetail = async () => {
     isLoading.value = true;
     console.log('Fetching collection detail for ID:', route.params.id);
     
-    const res = await axios.get(`http://127.0.0.1:8000/api/koleksi/${route.params.id}`);
+    const res = await axios.get(`https://pusdiklat-repo-backend.zeabur.app/koleksi/${route.params.id}`);
     koleksi.value = res.data.data;
     
     console.log('Collection data received:', koleksi.value);
@@ -645,7 +645,7 @@ const fetchYoutubeData = async () => {
     console.log('YouTube link from koleksi:', koleksi.value.youtube_link);
     
     // Test the backend API
-    const response = await axios.get(`http://127.0.0.1:8000/api/youtube/embed/${route.params.id}`);
+    const response = await axios.get(`https://pusdiklat-repo-backend.zeabur.app/api/youtube/embed/${route.params.id}`);
     
     console.log('YouTube API Response:', response.data);
     
@@ -705,7 +705,7 @@ const trackYoutubeView = async () => {
   if (!koleksi.value.id) return;
   
   try {
-    await axios.post(`http://127.0.0.1:8000/api/youtube/track-view/${koleksi.value.id}`);
+    await axios.post(`https://pusdiklat-repo-backend.zeabur.app/api/youtube/track-view/${koleksi.value.id}`);
     // Update local view count
     if (koleksi.value.views !== undefined) {
       koleksi.value.views++;
@@ -771,7 +771,7 @@ const openYouTubeWithTracking = async () => {
     
 //     // 1. Tambahkan ke riwayat baca terlebih dahulu
 //     try {
-//       await axios.post('http://localhost:8000/api/riwayat-baca', {
+//       await axios.post('https://pusdiklat-repo-backend.zeabur.app:8000/api/riwayat-baca', {
 //         koleksi_id: id
 //       }, {
 //         headers: { Authorization: `Bearer ${authStore.token}` }
@@ -908,13 +908,13 @@ const handleDeleteCancel = () => {
 const toggleFavorite = async (koleksiId) => {
   try {
     if (isFavorite(koleksiId)) {
-      await axios.delete(`http://localhost:8000/api/favorit/by-koleksi/${koleksiId}`, {
+      await axios.delete(`https://pusdiklat-repo-backend.zeabur.app/api/favorit/by-koleksi/${koleksiId}`, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       });
       favorites.value[koleksiId] = false;
       showToast('success', 'Koleksi dihapus dari favorit');
     } else {
-      await axios.post('http://localhost:8000/api/favorit', {
+      await axios.post('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
         koleksi_id: koleksiId
       }, {
         headers: { Authorization: `Bearer ${authStore.token}` }
@@ -942,7 +942,7 @@ onMounted(async () => {
 // Function to load favorites
 const loadFavorites = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/favorit', {
+    const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
       headers: { Authorization: `Bearer ${authStore.token}` }
     });
     if (response.data.success) {
@@ -995,13 +995,13 @@ const shareViaTelegram = () => {
   
   //   try {
   //     if (savedItems.value[koleksiId]) {
-  //       await axios.delete(`http://localhost:8000/api/simpan-koleksi/by-koleksi/${koleksiId}`, {
+  //       await axios.delete(`https://pusdiklat-repo-backend.zeabur.app:8000/api/simpan-koleksi/by-koleksi/${koleksiId}`, {
   //         headers: { Authorization: `Bearer ${authStore.token}` }
   //       });
   //       savedItems.value[koleksiId] = false;
   //       showToast('success', 'Koleksi dihapus dari simpan');
   //     } else {
-  //       await axios.post('http://localhost:8000/api/simpan-koleksi', { koleksi_id: koleksiId }, {
+  //       await axios.post('https://pusdiklat-repo-backend.zeabur.app:8000/api/simpan-koleksi', { koleksi_id: koleksiId }, {
   //         headers: { Authorization: `Bearer ${authStore.token}` }
   //       });
   //       savedItems.value[koleksiId] = true;
@@ -1046,7 +1046,7 @@ const shareViaTelegram = () => {
   
     try {
       // Load favorites
-      const favRes = await axios.get('http://localhost:8000/api/favorit', {
+      const favRes = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/favorit', {
         headers: { Authorization: `Bearer ${authStore.token}` }
       });
       if (favRes.data.success) {
@@ -1056,7 +1056,7 @@ const shareViaTelegram = () => {
       }
   
       // Load saved items
-      const savedRes = await axios.get('http://localhost:8000/api/simpan-koleksi', {
+      const savedRes = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/simpan-koleksi', {
         headers: { Authorization: `Bearer ${authStore.token}` }
       });
       if (savedRes.data.success) {

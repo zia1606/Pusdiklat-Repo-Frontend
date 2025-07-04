@@ -136,7 +136,7 @@ const loginWithGoogle = () => {
   googleLoading.value = true
   if (process.client) {
     const redirectUri = encodeURIComponent(window.location.origin + '/auth/callback')
-    window.location.href = `http://127.0.0.1:8000/api/auth/google/redirect?redirect_uri=${redirectUri}`
+    window.location.href = `https://pusdiklat-repo-backend.zeabur.app/api/auth/google/redirect?redirect_uri=${redirectUri}`
   }
 }
 
@@ -166,7 +166,7 @@ onMounted(() => {
 // Di script setup login.vue
 const handleLogin = async () => {
   try {
-    const response = await $fetch('http://127.0.0.1:8000/api/login', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/login', {
       method: 'POST',
       body: form.value
     })

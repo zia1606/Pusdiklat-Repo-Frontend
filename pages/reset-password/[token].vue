@@ -132,7 +132,7 @@ const validateToken = async () => {
   errorMessage.value = ''
   
   try {
-    const response = await $fetch(`http://127.0.0.1:8000/api/validasi-forgot-password/${form.value.token}`)
+    const response = await $fetch(`https://pusdiklat-repo-backend.zeabur.app/api/validasi-forgot-password/${form.value.token}`)
     
     console.log('Response validasi token:', response) // Debug
     
@@ -192,7 +192,7 @@ const handleResetPassword = async () => {
     
     console.log('Payload yang akan dikirim:', payload) // Debug
 
-    const response = await $fetch('http://127.0.0.1:8000/api/reset-password-act', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/reset-password-act', {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {

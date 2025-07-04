@@ -67,8 +67,8 @@ const fetchPdf = async () => {
 
     const timestamp = Date.now();
     const url = authStore.isAuthenticated 
-      ? `http://127.0.0.1:8000/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
-      : `http://127.0.0.1:8000/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
+      ? `https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
+      : `https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
 
     const headers = {};
     if (authStore.isAuthenticated) {

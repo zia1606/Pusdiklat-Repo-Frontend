@@ -129,7 +129,7 @@ const fetchPdf = async () => {
 
     // Fetch PDF with authentication headers
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/koleksi/${route.params.id}/pdf`, 
+      `https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}/pdf`, 
       {
         headers: {
           'Authorization': `Bearer ${authStore.token}`,

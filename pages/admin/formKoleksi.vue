@@ -374,7 +374,7 @@ export default {
       }
 
       try {
-        const response = await axios.get('http://localhost:8000/api/kategori-bang-kom', {
+        const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom', {
           headers: {
             'Authorization': `Bearer ${this.authStore.token}`
           }
@@ -397,7 +397,7 @@ export default {
       }
 
       try {
-        const response = await axios.get('http://localhost:8000/api/jenis-dokumen', {
+        const response = await axios.get('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen', {
           headers: {
             'Authorization': `Bearer ${this.authStore.token}`
           }
@@ -496,7 +496,7 @@ export default {
       }
 
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/koleksi', formData, {
+        const response = await axios.post('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${this.authStore.token}`
@@ -657,7 +657,7 @@ const fetchKategoriBangKom = async () => {
   }
 
   try {
-    const response = await $fetch('http://localhost:8000/api/kategori-bang-kom', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/kategori-bang-kom', {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -683,7 +683,7 @@ const fetchJenisDokumen = async () => {
   }
 
   try {
-    const response = await $fetch('http://localhost:8000/api/jenis-dokumen', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/jenis-dokumen', {
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
         'Accept': 'application/json'
@@ -820,7 +820,7 @@ const saveKoleksi = async () => {
   }
 
   try {
-    const response = await $fetch('http://127.0.0.1:8000/api/koleksi', {
+    const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', {
       method: 'POST',
       body: formData,
       headers: {
