@@ -200,6 +200,9 @@
   import { ref, onMounted, onUnmounted, computed } from "vue";
   import axios from 'axios';
   
+  // Tambahkan ini untuk ambil runtime config
+const { public: { apiBaseUrl } } = useRuntimeConfig();
+
   // KONFIGURASI
   const TOTAL_CARDS = 10; // Selalu tampilkan 10 card
   const CARDS_PER_SLIDE = {

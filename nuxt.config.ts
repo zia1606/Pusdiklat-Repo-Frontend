@@ -33,5 +33,11 @@ export default defineNuxtConfig({
         // Tambahan meta tags lainnya
       ]
     }
-  }
+  },
+
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://pusdiklat-repo-backend.zeabur.app',
+    },
+  },
 })
