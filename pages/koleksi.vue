@@ -565,7 +565,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import Filters from '@/components/Filters.vue';
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { useNuxtApp } from '#app';
 import { useToast } from '~/composables/useToast'
 
