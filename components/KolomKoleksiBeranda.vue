@@ -384,7 +384,7 @@
   const fetchPopularCollections = async () => {
     try {
       isLoadingPopular.value = true
-      const response = await $fetch('http://localhost:8000/api/koleksi', {
+      const response = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi', {
         params: {
           sort_by: 'popular',
           per_page: 10
@@ -414,7 +414,7 @@
       isLoadingBest.value = true
       
       // Coba ambil best collection terlebih dahulu
-      const bestResponse = await $fetch('http://127.0.0.1:8000/api/koleksi/best-collections')
+      const bestResponse = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/best-collections')
       
       if (bestResponse.success && bestResponse.data.length > 0) {
         bestCollections.value = bestResponse.data.map(item => ({
@@ -430,7 +430,7 @@
         showingBestCollection.value = true
       } else {
         // Jika tidak ada best collection, ambil koleksi dengan favorit tertinggi
-        const favResponse = await $fetch('http://localhost:8000/api/koleksi/most-favorited')
+        const favResponse = await $fetch('https://pusdiklat-repo-backend.zeabur.app/api/koleksi/most-favorited')
         
         if (favResponse.success) {
           mostFavorited.value = favResponse.data.map(item => ({

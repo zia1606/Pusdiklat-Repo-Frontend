@@ -248,7 +248,7 @@
   const getKoleksiTerbaru = async () => {
     try {
       isLoading.value = true;
-      const res = await axios.get('http://127.0.0.1:8000/api/koleksi', {
+      const res = await axios.get(`${apiBaseUrl}/api/koleksi`, {
         params: { 
           sort_by: 'terbaru',
           per_page: TOTAL_CARDS 
