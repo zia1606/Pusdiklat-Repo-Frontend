@@ -767,7 +767,7 @@ const fetchUsers = async () => {
 // Fetch available roles
 const fetchRoles = async () => {
   try {
-    const response = await $fetch('http://localhost:8000/api/roles', {
+    const response = await $fetch(`${apiBaseUrl}/api/roles`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${authStore.token}`
@@ -867,7 +867,7 @@ const updateUserRole = async () => {
 
   updatingRole.value = true;
   try {
-    const response = await $fetch(`http://localhost:8000/api/users/${userForRoleChange.value.id}/role`, {
+    const response = await $fetch(`${apiBaseUrl}/api/users/${userForRoleChange.value.id}/role`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
@@ -911,7 +911,7 @@ const confirmDelete = async () => {
   
   isDeleting.value = true
   try {
-    const response = await $fetch(`http://localhost:8000/api/users/${userToDelete.value}`, {
+    const response = await $fetch(`${apiBaseUrl}/api/users/${userToDelete.value}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${authStore.token}`
@@ -954,7 +954,7 @@ const confirmBulkDelete = async () => {
 
   isDeleting.value = true
   try {
-    const response = await $fetch('http://localhost:8000/api/users/bulk-delete', {
+    const response = await $fetch(`${apiBaseUrl}/api/users/bulk-delete`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authStore.token}`,
