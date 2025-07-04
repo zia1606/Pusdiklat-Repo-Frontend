@@ -22,9 +22,10 @@ export const useUnifiedAuthStore = defineStore("unifiedAuth", {
   actions: {
     async logout() {
     try {
+      const { public: { apiBaseUrl } } = useRuntimeConfig();
       // Panggil API logout hanya jika token ada
       if (this.token) {
-        await $fetch('http://127.0.0.1:8000/api/logout', {
+        await $fetch(`${apiBaseUrl}/api/logout`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${this.token}`,
@@ -94,6 +95,7 @@ export const useUnifiedAuthStore = defineStore("unifiedAuth", {
         const token = localStorage.getItem("auth_token")
         const user = localStorage.getItem("auth_user")
         const role = localStorage.getItem("auth_role")
+        const { public: { apiBaseUrl } } = useRuntimeConfig();
 
         if (token && user && role) {
           this.token = token
@@ -103,7 +105,7 @@ export const useUnifiedAuthStore = defineStore("unifiedAuth", {
           
           // Verifikasi token dengan backend
           try {
-            const response = await $fetch("http://127.0.0.1:8000/api/check-auth", {
+            const response = await $fetch(`${apiBaseUrl}/api/check-auth`, {
               headers: { Authorization: `Bearer ${token}` }
             })
             
@@ -123,9 +125,10 @@ export const useUnifiedAuthStore = defineStore("unifiedAuth", {
 
     async checkAuthStatus() {
       if (!this.token) return false
-
+      const { public: { apiBaseUrl } } = useRuntimeConfig();
+      
       try {
-        const response = await $fetch("http://127.0.0.1:8000/api/check-auth", {
+        const response = await $fetch(`${apiBaseUrl}/api/check-auth`, {
           headers: { Authorization: `Bearer ${this.token}` }
         })
 

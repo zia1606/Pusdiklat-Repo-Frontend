@@ -3,7 +3,7 @@ import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 
 export const useApi = () => {
   const authStore = useUnifiedAuthStore()
-
+  const { public: { apiBaseUrl } } = useRuntimeConfig();
   const apiFetch = async (url, options = {}) => {
     const headers = {
       'Accept': 'application/json',
@@ -14,7 +14,7 @@ export const useApi = () => {
 
     try {
       return await $fetch(url, {
-        baseURL: 'http://127.0.0.1:8000/api',
+        baseURL: `${apiBaseUrl}/api`,
         ...options,
         headers
       })
