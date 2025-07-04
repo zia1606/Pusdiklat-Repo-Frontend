@@ -605,7 +605,7 @@ const getKoleksiDetail = async () => {
     isLoading.value = true;
     console.log('Fetching collection detail for ID:', route.params.id);
     
-    const res = await axios.get(`https://pusdiklat-repo-backend.zeabur.app/koleksi/${route.params.id}`);
+    const res = await axios.get(`https://pusdiklat-repo-backend.zeabur.app/api/koleksi/${route.params.id}`);
     koleksi.value = res.data.data;
     
     console.log('Collection data received:', koleksi.value);
