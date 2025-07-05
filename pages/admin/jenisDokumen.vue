@@ -23,7 +23,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            <span>Tambah Jenis Dokumen</span>
+            <span class="sm:hidden">Tambah</span>
+            <span class="hidden sm:inline">Tambah Jenis Dokumen</span>
         </button>
     </div>
 </div>
@@ -44,9 +45,10 @@
                                                 <td class="px-6 py-3 text-left text-sm text-gray-500">{{ index + 1 }}</td>
                                                 <td class="px-6 py-3 text-left text-sm text-gray-500">{{ item.nama }}</td>
                                                 <td class="px-6 py-3 text-center text-sm text-gray-500">
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <!-- <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                         {{ item.total || 0 }}
-                                                    </span>
+                                                    </span> -->
+                                                    {{ item.total || 0 }}
                                                 </td>
                                                 <td class="px-6 py-3 text-center text-sm text-gray-500">
                                                     <div class="flex item-center justify-center">
@@ -75,7 +77,7 @@
 
         <!-- Modal for Add and Edit -->
         <div v-if="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
             <div class="absolute inset-0 bg-gray-500 opacity-75" @click="closeModal"></div>
             </div>
@@ -92,7 +94,7 @@
                     
                     <form @submit.prevent="isEditMode ? updateJenisDokumen() : addJenisDokumen()">
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="nama">Nama Jenis Dokumen</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2 text-left" for="nama">Nama Jenis Dokumen</label>
                         <div class="relative">
                         <input 
                             v-model="form.nama" 

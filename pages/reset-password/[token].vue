@@ -19,10 +19,10 @@
       </div>
 
       <!-- Info email (opsional, bisa dihapus jika tidak diperlukan) -->
-      <div v-if="form.email && !validatingToken" class="mb-4 p-2 bg-gray-100 text-sm rounded">
-        <span class="text-gray-600">Reset password untuk:</span>
+      <!-- <div v-if="form.email && !validatingToken" class="mb-4 p-2 bg-gray-100 text-sm rounded">
+        <span class="text-gray-600">Reset password untuk: </span>
         <span class="font-medium">{{ form.email }}</span>
-      </div>
+      </div> -->
       
       <!-- Form hanya muncul jika token valid dan email sudah ter-set -->
       <form v-if="!validatingToken && form.email" @submit.prevent="handleResetPassword">

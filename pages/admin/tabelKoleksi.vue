@@ -313,7 +313,7 @@
               Prev
             </button>
             <span class="text-sm text-gray-700">
-              Halaman {{ currentPage }} dari {{ lastPage }}
+              Hal {{ currentPage }} / {{ lastPage }}
             </span>
             <button
               @click="goToNextPage"

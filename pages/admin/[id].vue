@@ -187,94 +187,94 @@
                   <label class="block text-sm font-medium text-gray-700 mb-2">Dokumen PDF</label>
                   
                   <!-- Display existing PDF -->
-                  <div v-if="koleksi.dokumen_pdf && !newFile && !existingFileRemoved" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center space-x-3">
-                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                        </svg>
-                        <div>
-                          <p class="text-sm font-medium text-gray-900 truncate max-w-xs">
-                            {{ koleksi.dokumen_pdf.split('/').pop() }}
-                          </p>
-                          <p class="text-xs text-gray-500">PDF File</p>
-                        </div>
-                      </div>
-                      <div class="flex space-x-2">
-                        <button
-                          @click="previewExistingFile"
-                          type="button"
-                          class="text-blue-500 hover:text-blue-700 cursor-pointer"
-                          title="Lihat file"
-                        >
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                          </svg>
-                        </button>
-                        <label for="dokumen_pdf_replace" class="text-green-500 hover:text-green-700 cursor-pointer" title="Ganti file">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                          </svg>
-                        </label>
-                        <input 
-                          id="dokumen_pdf_replace" 
-                          type="file" 
-                          @change="handleFileUpload" 
-                          accept="application/pdf" 
-                          class="hidden"
-                        >
-                        <button 
-                          @click="removeExistingFile" 
-                          type="button" 
-                          class="text-red-500 hover:text-red-700 cursor-pointer"
-                          title="Hapus file"
-                        >
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+<div v-if="koleksi.dokumen_pdf && !newFile && !existingFileRemoved" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3 min-w-0"> <!-- Added min-w-0 to allow truncation -->
+      <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+      </svg>
+      <div class="min-w-0"> <!-- Added min-w-0 to allow truncation -->
+        <p class="text-sm font-medium text-gray-900 truncate">
+          {{ koleksi.dokumen_pdf.split('/').pop() }}
+        </p>
+        <p class="text-xs text-gray-500">PDF File</p>
+      </div>
+    </div>
+    <div class="flex space-x-2 flex-shrink-0"> <!-- Added flex-shrink-0 to prevent buttons from shrinking -->
+      <button
+        @click="previewExistingFile"
+        type="button"
+        class="text-blue-500 hover:text-blue-700 cursor-pointer"
+        title="Lihat file"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+      </button>
+      <label for="dokumen_pdf_replace" class="text-green-500 hover:text-green-700 cursor-pointer" title="Ganti file">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+      </label>
+      <input 
+        id="dokumen_pdf_replace" 
+        type="file" 
+        @change="handleFileUpload" 
+        accept="application/pdf" 
+        class="hidden"
+      >
+      <button 
+        @click="removeExistingFile" 
+        type="button" 
+        class="text-red-500 hover:text-red-700 cursor-pointer"
+        title="Hapus file"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
 
-                  <!-- Display new uploaded file -->
-                  <div v-if="newFile" class="border border-gray-200 rounded-lg p-4 bg-green-50">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center space-x-3">
-                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                        </svg>
-                        <div>
-                          <p class="text-sm font-medium text-gray-900 truncate max-w-xs">{{ newFile.name }}</p>
-                          <p class="text-xs text-gray-500">{{ (newFile.size / 1024 / 1024).toFixed(2) }} MB - File Baru</p>
-                        </div>
-                      </div>
-                      <div class="flex space-x-2">
-                        <button
-                          @click="previewNewFile"
-                          type="button"
-                          class="text-blue-500 hover:text-blue-700 cursor-pointer"
-                          title="Preview file"
-                        >
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                          </svg>
-                        </button>
-                        <button 
-                          @click="removeNewFile" 
-                          type="button" 
-                          class="text-red-500 hover:text-red-700 cursor-pointer"
-                          title="Hapus file"
-                        >
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+<!-- Display new uploaded file -->
+<div v-if="newFile" class="border border-gray-200 rounded-lg p-4 bg-green-50">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3 min-w-0"> <!-- Added min-w-0 to allow truncation -->
+      <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+      </svg>
+      <div class="min-w-0"> <!-- Added min-w-0 to allow truncation -->
+        <p class="text-sm font-medium text-gray-900 truncate">{{ newFile.name }}</p>
+        <p class="text-xs text-gray-500">{{ (newFile.size / 1024 / 1024).toFixed(2) }} MB - File Baru</p>
+      </div>
+    </div>
+    <div class="flex space-x-2 flex-shrink-0"> <!-- Added flex-shrink-0 to prevent buttons from shrinking -->
+      <button
+        @click="previewNewFile"
+        type="button"
+        class="text-blue-500 hover:text-blue-700 cursor-pointer"
+        title="Preview file"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+      </button>
+      <button 
+        @click="removeNewFile" 
+        type="button" 
+        class="text-red-500 hover:text-red-700 cursor-pointer"
+        title="Hapus file"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
                   
                   <!-- Upload area -->
                   <div v-if="(!koleksi.dokumen_pdf && !newFile) || (existingFileRemoved && !newFile)" class="flex items-center justify-center w-full">

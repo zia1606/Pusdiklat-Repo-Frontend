@@ -23,7 +23,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            <span>Tambah Kategori</span>
+            <span class="sm:hidden">Tambah</span>
+            <span class="hidden sm:inline">Tambah Kategori</span>
         </button>
     </div>
 </div>
@@ -76,7 +77,7 @@
 
       <!-- Modal for Add and Edit -->
       <div v-if="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <div class="fixed inset-0 transition-opacity" aria-hidden="true">
           <div class="absolute inset-0 bg-gray-500 opacity-75" @click="closeModal"></div>
           </div>
@@ -93,7 +94,7 @@
                   
                   <form @submit.prevent="isEditMode ? updateKategori() : addKategori()">
                   <div class="mb-6">
-                      <label class="block text-sm font-medium text-gray-700 mb-2" for="nama">Nama Kategori</label>
+                      <label class="block text-sm font-medium text-gray-700 mb-2 text-left" for="nama">Nama Kategori</label>
                       <div class="relative">
                       <input 
                           v-model="form.nama" 
@@ -116,69 +117,6 @@
                       type="button"
                       @click="closeModal"
                       class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                      >
-                      Batal
-                      </button>
-                  </div>
-                  </form>
-              </div>
-              </div>
-          </div>
-          </div>
-      </div>
-      </div>
-
-      <!-- Modal for Add and Edit -->
-      <div v-if="isModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div class="absolute inset-0 bg-gray-500 opacity-75" @click="closeModal"></div>
-          </div>
-
-          <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-          <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div class="sm:flex sm:items-start">
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                  <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  {{ isEditMode ? 'Edit Kategori' : 'Tambah Kategori' }}
-                  </h3>
-                  
-                  <form @submit.prevent="isEditMode ? updateKategori() : addKategori()">
-                  <div class="mb-6">
-                      <label class="block text-sm font-medium text-gray-700 mb-2" for="nama">Nama Kategori</label>
-                      <div class="relative">
-                      <input 
-                          v-model="form.nama" 
-                          type="text" 
-                          id="nama" 
-                          class="w-full pl-4 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Masukkan nama kategori"
-                      >
-                      </div>
-                  </div>
-
-                  <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                      <button
-                      type="submit"
-                      :disabled="isSubmitting"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
-                      >
-                      <span v-if="!isSubmitting">{{ isEditMode ? 'Update' : 'Simpan' }}</span>
-                      <span v-else class="flex items-center">
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Memproses...
-                      </span>
-                      </button>
-                      <button
-                      type="button"
-                      @click="closeModal"
-                      :disabled="isSubmitting"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                       >
                       Batal
                       </button>
