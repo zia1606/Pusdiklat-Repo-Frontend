@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 
 const props = defineProps({
   pdfUrl: {
@@ -14,7 +14,7 @@ const props = defineProps({
   },
   watermarkImage: {
     type: String,
-    default: '/files/BPS.png'
+    default: '/files/BPS.png' // Path default untuk gambar watermark
   }
 });
 
@@ -22,34 +22,15 @@ const emit = defineEmits(['document-loaded']);
 const viewer = ref(null);
 const instance = ref(null);
 const watermarkOptions = ref(null);
-let webViewerModule = null;
 
-onMounted(async () => {
-  if (process.client) {
-    try {
-      // Gunakan yang sudah dipreload di app.vue
-      if (!window.__PDFJSExpress) {
-        window.__PDFJSExpress = (await import('@pdftron/pdfjs-express-viewer')).default;
-      }
-      
-      // Load watermark dan init viewer secara paralel
-      await Promise.all([
-        loadWatermark(),
-        initPDFViewer()
-      ]);
-    } catch (err) {
-      console.error('Failed to initialize PDF viewer:', err);
-    }
-  }
-});
-
-const loadWatermark = () => {
+// Fungsi untuk memuat watermark
+const loadWatermark = async () => {
+  if (!props.watermarkImage) return;
+  
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  
   return new Promise((resolve) => {
-    if (!props.watermarkImage) return resolve();
-    
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    
     img.onload = () => {
       watermarkOptions.value = {
         footer: null,
@@ -85,23 +66,25 @@ const loadWatermark = () => {
       };
       resolve();
     };
-    
-    img.onerror = () => resolve();
+    img.onerror = (err) => {
+      console.error("Error loading watermark:", err);
+      resolve();
+    };
     img.src = props.watermarkImage;
   });
 };
 
+// Fungsi untuk menginisialisasi PDF.js Express
 const initPDFViewer = async () => {
   try {
-    const WebViewer = webViewerModule.default;
+    const WebViewer = (await import('@pdftron/pdfjs-express-viewer')).default;
     
-    instance.value = await WebViewer(
+    WebViewer(
       {
-        path: '/pdfjsexpress',
+        path: '/pdfjsexpress', // Path ke folder PDF.js Express
         initialDoc: props.pdfUrl,
-        extension: 'pdf',
-        licenseKey: '6y2mb6vTzXAQi79dyjig',
-        disableHeadRequest: true,
+        licenseKey: '6y2mb6vTzXAQi79dyjig', // Ganti dengan license key Anda
+        disableCreateObjectURL: true,
         disabledElements: [
           'downloadButton',
           'printButton',
@@ -114,49 +97,88 @@ const initPDFViewer = async () => {
         ],
         enableFilePicker: false,
         isReadOnly: true,
-        custom: { disablePDFEditing: true }
+        custom: {
+          disablePDFEditing: true
+        }
       },
       viewer.value
-    );
+    ).then((webViewerInstance) => {
+      instance.value = webViewerInstance;
+      const { Core, UI } = webViewerInstance;
+      const { documentViewer } = Core;
 
-    const { Core, UI } = instance.value;
-    const { documentViewer } = Core;
+      // Nonaktifkan fitur yang tidak diinginkan
+      webViewerInstance.disableFeatures([
+        webViewerInstance.Feature.TextSelection,
+        webViewerInstance.Feature.Copy,
+        webViewerInstance.Feature.Print,
+        webViewerInstance.Feature.Download,
+        webViewerInstance.Feature.Edit
+      ]);
 
-    instance.value.disableFeatures([
-      instance.value.Feature.TextSelection,
-      instance.value.Feature.Copy,
-      instance.value.Feature.Print,
-      instance.value.Feature.Download,
-      instance.value.Feature.Edit
-    ]);
+      // Set tool default ke Pan tool
+      UI.setToolMode('Pan');
+      
+      // Blokir shortcut keyboard
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      });
 
-    UI.setToolMode('Pan');
-    
-    if (watermarkOptions.value) {
-      documentViewer.setWatermark(watermarkOptions.value);
-    }
-
-    documentViewer.addEventListener('documentLoaded', () => {
-      emit('document-loaded', documentViewer.getDocument());
+      // Set watermark jika ada
       if (watermarkOptions.value) {
         documentViewer.setWatermark(watermarkOptions.value);
       }
-    });
 
+      // Event listener ketika dokumen selesai dimuat
+      documentViewer.addEventListener('documentLoaded', () => {
+        emit('document-loaded', documentViewer.getDocument());
+        
+        // Refresh watermark setelah dokumen dimuat
+        if (watermarkOptions.value) {
+          documentViewer.setWatermark(watermarkOptions.value);
+        }
+      });
+
+      // Tambahkan tombol navigasi custom di header
+      UI.setHeaderItems((header) => {
+        header.push({
+          type: "actionButton",
+          img: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5.055 7.06l-1.77-1.77A7 7 0 0013 20v-2a5 5 0 01-5-5V7.06zm7.945-3.055v2a5 5 0 015 5v2h2a7 7 0 00-7-7z"/></svg>',
+          onClick: () => {
+            const currentPage = documentViewer.getCurrentPage();
+            const totalPages = documentViewer.getPageCount();
+            const atLastPage = currentPage === totalPages;
+
+            if (atLastPage) {
+              documentViewer.setCurrentPage(1);
+            } else {
+              documentViewer.setCurrentPage(currentPage + 1);
+            }
+          },
+          title: 'Next Page'
+        });
+      });
+    });
   } catch (error) {
     console.error('Error initializing PDF.js Express:', error);
   }
 };
 
-onBeforeUnmount(() => {
-  if (instance.value) {
-    instance.value.UI.dispose();
-  }
-});
-
+// Watch untuk perubahan URL PDF
 watch(() => props.pdfUrl, (newUrl) => {
   if (newUrl && instance.value) {
     instance.value.UI.loadDocument(newUrl);
+  }
+});
+
+onMounted(async () => {
+  if (process.client) {
+    await loadWatermark();
+    await initPDFViewer();
   }
 });
 </script>
