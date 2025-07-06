@@ -86,7 +86,11 @@ const loadWatermark = () => {
 
 const initPDFViewer = async () => {
   try {
-    const WebViewer = webViewerModule.default;
+    const WebViewer = window.__PDFJSExpress;
+    
+    if (!WebViewer) {
+      throw new Error('PDF.js Express not loaded');
+    }
     
     instance.value = await WebViewer(
       {

@@ -87,7 +87,8 @@ const fetchPdf = async () => {
 };
 
 onMounted(async () => {
-  await authStore.initializeAuth();
-  await fetchPdf();
+  const authPromise = authStore.initializeAuth();
+  const pdfPromise = fetchPdf();
+  await Promise.all([authPromise, pdfPromise]);
 });
 </script>
