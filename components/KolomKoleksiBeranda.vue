@@ -1,6 +1,6 @@
 <template>
-    <div class="pb-25 bg-gray-50 ">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 md:mt-0">
+    <div class="pb-25 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section with Explore Button -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 lg:mb-10 gap-6 px-4">
   <div class="text-left w-full lg:w-auto">
@@ -12,7 +12,7 @@
       BARU
     </div> -->
     
-    <h2 class="text-3xl font-bold text-gray-900 mb-2">
+    <h2 class="text-3xl font-bold text-gray-900 mb-2 mt-20 md:mt-0">
       Koleksi <span class="text-blue-800">Lainnya</span>
     </h2>
     <p class="text-gray-600 max-w-lg">Temukan koleksi terpopuler dan terbaik kami</p>
