@@ -38,9 +38,8 @@
           
       <CardKoleksiTerbaru/>
 
-      <div class="mt-20 md:mt-0">
+  
       <KolomKoleksiBeranda />
-      </div>
   
       
   
