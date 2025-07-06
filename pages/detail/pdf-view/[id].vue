@@ -47,6 +47,9 @@ import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 
+// Add this line to properly get the API base URL
+const { public: { apiBaseUrl } } = useRuntimeConfig()
+
 const route = useRoute();
 const authStore = useUnifiedAuthStore()
 
