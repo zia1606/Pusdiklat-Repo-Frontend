@@ -35,16 +35,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, onBeforeMount } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
 import PdfViewer from '~/components/PdfViewer.vue';
 const { public: { apiBaseUrl } } = useRuntimeConfig();
+useHead({
+  title: 'PDF - Sistem Repositori Pusdiklat BPS'
+})
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useUnifiedAuthStore()
 
+const koleksi = ref({});
 const pdfUrl = ref('');
 const loading = ref(true);
 const error = ref('');
@@ -63,6 +68,13 @@ const fetchPdf = async () => {
       ? `${apiBaseUrl}/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
       : `${apiBaseUrl}/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
 
+    // const headers = {};
+    // if (authStore.isAuthenticated) {
+    //   headers['Authorization'] = `Bearer ${authStore.token}`;
+    // }
+
+    // const response = await fetch(url, { headers });
+    
     const response = await axios.get(url, {
       responseType: 'blob',
       headers: authStore.isAuthenticated 
@@ -70,15 +82,20 @@ const fetchPdf = async () => {
         : {},
     });
 
-    pdfUrl.value = URL.createObjectURL(response.data);
+    if (!response.ok) {
+      throw new Error(response.status === 401 
+        ? 'Anda harus login untuk mengakses dokumen ini' 
+        : 'Gagal memuat dokumen');
+    }
+
+    // const blob = await response.blob();
+    pdfUrl.value = URL.createObjectURL(blob);
     
   } catch (err) {
-    console.error('Error fetching PDF:', err);
     error.value = err.response?.status === 401 
       ? 'Anda harus login untuk mengakses dokumen ini' 
       : 'Gagal memuat dokumen';
-      
-    if (err.response?.status === 401) {
+    if (err.message.includes('login')) {
       navigateTo('/auth/login');
     }
   } finally {
@@ -86,8 +103,17 @@ const fetchPdf = async () => {
   }
 };
 
-onMounted(async () => {
-  await authStore.initializeAuth();
-  await fetchPdf();
+// Gunakan onBeforeMount untuk memulai proses lebih awal
+onBeforeMount(async () => {
+  // Jalankan fetchPdf secara paralel dengan initializeAuth
+  await Promise.all([
+    authStore.initializeAuth(),
+    fetchPdf()
+  ]);
 });
+
+// onMounted(async () => {
+//   await authStore.initializeAuth();
+//   await fetchPdf();
+// });
 </script>

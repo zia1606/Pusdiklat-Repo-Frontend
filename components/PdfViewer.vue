@@ -27,9 +27,16 @@ let webViewerModule = null;
 onMounted(async () => {
   if (process.client) {
     try {
-      webViewerModule = await import('@pdftron/pdfjs-express-viewer');
-      await loadWatermark();
-      await initPDFViewer();
+      // Gunakan yang sudah dipreload di app.vue
+      if (!window.__PDFJSExpress) {
+        window.__PDFJSExpress = (await import('@pdftron/pdfjs-express-viewer')).default;
+      }
+      
+      // Load watermark dan init viewer secara paralel
+      await Promise.all([
+        loadWatermark(),
+        initPDFViewer()
+      ]);
     } catch (err) {
       console.error('Failed to initialize PDF viewer:', err);
     }
