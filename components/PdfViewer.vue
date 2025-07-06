@@ -14,7 +14,7 @@ const props = defineProps({
   },
   watermarkImage: {
     type: String,
-    default: '/files/BPS.png' // Path default untuk gambar watermark
+    default: '/files/BPS.png'
   }
 });
 
@@ -24,17 +24,18 @@ const instance = ref(null);
 const watermarkOptions = ref(null);
 let webViewerModule = null;
 
-// Preload PDF.js Express saat komponen dibuat
 onMounted(async () => {
   if (process.client) {
-    // Preload modul PDF.js Express
-    webViewerModule = await import('@pdftron/pdfjs-express-viewer');
-    await loadWatermark();
-    await initPDFViewer();
+    try {
+      webViewerModule = await import('@pdftron/pdfjs-express-viewer');
+      await loadWatermark();
+      await initPDFViewer();
+    } catch (err) {
+      console.error('Failed to initialize PDF viewer:', err);
+    }
   }
 });
 
-// Fungsi yang dioptimasi untuk memuat watermark
 const loadWatermark = () => {
   return new Promise((resolve) => {
     if (!props.watermarkImage) return resolve();
@@ -139,13 +140,9 @@ const initPDFViewer = async () => {
   }
 };
 
-// Cleanup
 onBeforeUnmount(() => {
   if (instance.value) {
     instance.value.UI.dispose();
-  }
-  if (pdfUrl.value) {
-    URL.revokeObjectURL(pdfUrl.value);
   }
 });
 
@@ -154,20 +151,6 @@ watch(() => props.pdfUrl, (newUrl) => {
     instance.value.UI.loadDocument(newUrl);
   }
 });
-
-// Watch untuk perubahan URL PDF
-// watch(() => props.pdfUrl, (newUrl) => {
-//   if (newUrl && instance.value) {
-//     instance.value.UI.loadDocument(newUrl);
-//   }
-// });
-
-// onMounted(async () => {
-//   if (process.client) {
-//     await loadWatermark();
-//     await initPDFViewer();
-//   }
-// });
 </script>
 
 <style scoped>
