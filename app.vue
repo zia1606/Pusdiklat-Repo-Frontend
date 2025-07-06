@@ -7,19 +7,21 @@
 <script setup>
 import { onBeforeMount } from 'vue';
 
-onMounted(() => {
+onBeforeMount(() => {
   if (process.client) {
-    // Preload PDFTron dan watermark
-    const preload = Promise.all([
+    // Preload PDF.js Express dan library penting lainnya
+    const preloadResources = [
       import('@pdftron/pdfjs-express-viewer').then(module => {
         window.__PDFJSExpress = module.default;
       }),
       new Promise(resolve => {
         const img = new Image();
-        img.src = '/files/BPS.png';
+        img.src = '/files/BPS.png'; // Preload watermark
         img.onload = resolve;
       })
-    ]).catch(console.error);
+    ];
+    
+    Promise.allSettled(preloadResources).catch(console.error);
   }
 });
 </script>
