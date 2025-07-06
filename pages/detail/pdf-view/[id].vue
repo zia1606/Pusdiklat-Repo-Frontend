@@ -62,32 +62,39 @@ const fetchPdf = async () => {
   try {
     loading.value = true;
     error.value = '';
-    
-    await authStore.initializeAuth();
 
     const timestamp = Date.now();
     const url = authStore.isAuthenticated 
       ? `${apiBaseUrl}/api/koleksi/${route.params.id}/pdf?t=${timestamp}`
       : `${apiBaseUrl}/api/koleksi/${route.params.id}/public-pdf?t=${timestamp}`;
 
-    const headers = {};
-    if (authStore.isAuthenticated) {
-      headers['Authorization'] = `Bearer ${authStore.token}`;
-    }
+    // const headers = {};
+    // if (authStore.isAuthenticated) {
+    //   headers['Authorization'] = `Bearer ${authStore.token}`;
+    // }
 
-    const response = await fetch(url, { headers });
+    // const response = await fetch(url, { headers });
     
+    const response = await axios.get(url, {
+      responseType: 'blob',
+      headers: authStore.isAuthenticated 
+        ? { 'Authorization': `Bearer ${authStore.token}` } 
+        : {},
+    });
+
     if (!response.ok) {
       throw new Error(response.status === 401 
         ? 'Anda harus login untuk mengakses dokumen ini' 
         : 'Gagal memuat dokumen');
     }
 
-    const blob = await response.blob();
+    // const blob = await response.blob();
     pdfUrl.value = URL.createObjectURL(blob);
     
   } catch (err) {
-    error.value = err.message;
+    error.value = err.response?.status === 401 
+      ? 'Anda harus login untuk mengakses dokumen ini' 
+      : 'Gagal memuat dokumen';
     if (err.message.includes('login')) {
       navigateTo('/auth/login');
     }
@@ -95,6 +102,15 @@ const fetchPdf = async () => {
     loading.value = false;
   }
 };
+
+// Gunakan onBeforeMount untuk memulai proses lebih awal
+onBeforeMount(async () => {
+  // Jalankan fetchPdf secara paralel dengan initializeAuth
+  await Promise.all([
+    authStore.initializeAuth(),
+    fetchPdf()
+  ]);
+});
 
 onMounted(async () => {
   await authStore.initializeAuth();
