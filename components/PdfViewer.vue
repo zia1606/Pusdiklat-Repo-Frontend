@@ -92,8 +92,9 @@ const initPDFViewer = async () => {
       {
         path: '/pdfjsexpress',
         initialDoc: props.pdfUrl,
+        extension: 'pdf',
         licenseKey: '6y2mb6vTzXAQi79dyjig',
-        disableCreateObjectURL: true,
+        disableHeadRequest: true,
         disabledElements: [
           'downloadButton',
           'printButton',
