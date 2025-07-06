@@ -201,7 +201,7 @@
       </div>
     </div>
     <div class="flex space-x-2 flex-shrink-0"> <!-- Added flex-shrink-0 to prevent buttons from shrinking -->
-      <button
+      <!-- <button
         @click="previewExistingFile"
         type="button"
         class="text-blue-500 hover:text-blue-700 cursor-pointer"
@@ -211,7 +211,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
         </svg>
-      </button>
+      </button> -->
       <label for="dokumen_pdf_replace" class="text-green-500 hover:text-green-700 cursor-pointer" title="Ganti file">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -612,7 +612,9 @@ const removeNewFile = () => {
 
 const previewExistingFile = () => {
   if (koleksi.value.dokumen_pdf) {
-    window.open(koleksi.value.dokumen_pdf, '_blank')
+    // Gunakan endpoint API untuk preview file
+    const previewUrl = `${apiBaseUrl}/api/koleksi/${encodeURIComponent(koleksi.value.dokumen_pdf)}/pdf`
+    window.open(previewUrl, '_blank')
   }
 }
 

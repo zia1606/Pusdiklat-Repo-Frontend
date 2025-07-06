@@ -314,12 +314,12 @@
                       {{ doc.jenis_dokumen }}
                     </span>
                     <!-- Show similarity score only for content-based recommendations -->
-                    <span 
+                    <!-- <span 
                       v-if="recommendationType === 'content_based' && doc.similarity_score"
                       class="text-xs px-2 py-1 bg-purple-100 text-purple-800 rounded-full"
                     >
                       {{ Math.round(doc.similarity_score * 100) }}% match
-                    </span>
+                    </span> -->
                   </div>
                   <NuxtLink :to="`/detail/${doc.id}`" class="block">
                     <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
