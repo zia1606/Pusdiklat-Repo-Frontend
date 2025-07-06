@@ -1,6 +1,13 @@
 <template>
   <!-- PDF Viewer -->
   <div class="flex-1 relative h-screen">
+    <!-- Tambahkan progress bar -->
+    <div v-if="loading" class="absolute top-0 left-0 right-0 h-1 bg-gray-200 z-10">
+      <div 
+        class="h-full bg-blue-500 transition-all duration-300"
+        :style="{ width: `${loadProgress}%` }"
+      ></div>
+    </div>
     <PdfViewer 
       v-if="pdfUrl" 
       :pdf-url="pdfUrl" 
@@ -39,24 +46,27 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
-import PdfViewer from '~/components/PdfViewer.vue';
-const { public: { apiBaseUrl } } = useRuntimeConfig();
 
 const route = useRoute();
 const authStore = useUnifiedAuthStore()
 
 const pdfUrl = ref('');
-const loading = ref(true);
+const loading = ref(false);
+const loadProgress = ref(0);
 const error = ref('');
-
-const handleDocumentLoaded = (doc) => {
-  console.log('Dokumen berhasil dimuat:', doc);
-};
 
 const fetchPdf = async () => {
   try {
     loading.value = true;
-    error.value = '';
+    loadProgress.value = 0;
+    
+    const cacheKey = `pdf-${route.params.id}`;
+    const cachedUrl = sessionStorage.getItem(cacheKey);
+    
+    if (cachedUrl) {
+      pdfUrl.value = cachedUrl;
+      return;
+    }
 
     const timestamp = Date.now();
     const url = authStore.isAuthenticated 
@@ -68,26 +78,34 @@ const fetchPdf = async () => {
       headers: authStore.isAuthenticated 
         ? { 'Authorization': `Bearer ${authStore.token}` } 
         : {},
+      onDownloadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          loadProgress.value = Math.round(
+            (progressEvent.loaded / progressEvent.total) * 90
+          );
+        }
+      }
     });
 
-    pdfUrl.value = URL.createObjectURL(response.data);
+    const blobUrl = URL.createObjectURL(response.data);
+    sessionStorage.setItem(cacheKey, blobUrl);
+    pdfUrl.value = blobUrl;
+    loadProgress.value = 100;
     
   } catch (err) {
-    console.error('Error fetching PDF:', err);
     error.value = err.response?.status === 401 
       ? 'Anda harus login untuk mengakses dokumen ini' 
       : 'Gagal memuat dokumen';
-      
-    if (err.response?.status === 401) {
-      navigateTo('/auth/login');
-    }
+    console.error('PDF load error:', err);
   } finally {
     loading.value = false;
   }
 };
 
 onMounted(async () => {
-  await authStore.initializeAuth();
+  if (!authStore.isInitialized) {
+    await authStore.initializeAuth();
+  }
   await fetchPdf();
 });
 </script>
