@@ -1067,7 +1067,7 @@ const viewContent = (item) => {
   }
 }
 
-// View PDF function
+// View PDF function - Modified to open in new tab
 const viewPdf = async (id) => {
   try {
     // Check authentication
@@ -1083,14 +1083,16 @@ const viewPdf = async (id) => {
       return navigateTo('/auth/login')
     }
 
-    // Make the request
-    navigateTo(`/admin/pdf-view2/${id}`)
+    // Open PDF in new tab
+    const timestamp = Date.now();
+    const pdfViewerUrl = `/admin/pdf-view2/${id}?t=${timestamp}`;
+    window.open(pdfViewerUrl, '_blank');
 
   } catch (error) {
     console.error('Error:', error)
     alert(errorMessage)
   }
-}
+};
 
 // Fungsi untuk membuka modal konfirmasi
 const confirmDelete = (id) => {
