@@ -853,19 +853,32 @@ const toggleFavorite = async (koleksiId) => {
   }
 };
 
-// Function to load favorites
+// Enhanced loadFavorites function
 const loadFavorites = async () => {
+  if (!authStore.isAuthenticated) {
+    favorites.value = {};
+    return;
+  }
+  
   try {
     const response = await axios.get(`${apiBaseUrl}/api/favorit`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     });
+    
     if (response.data.success) {
+      // Reset favorites first
+      favorites.value = {};
+      // Then populate with current favorites
       response.data.data.forEach(item => {
         favorites.value[item.koleksi_id] = true;
       });
+      console.log('Favorites loaded:', favorites.value);
     }
   } catch (error) {
     console.error('Error loading favorites:', error);
+    if (error.response?.status === 401) {
+      await authStore.logout();
+    }
   }
 };
 
@@ -940,20 +953,18 @@ const loadUserCollections = async () => {
   }
 };
 
-// Mounted hook
+// Modify the onMounted hook to ensure proper loading order
 onMounted(async () => {
   await authStore.initializeAuth();
   await getKoleksiDetail();
+  await loadFavorites(); // Load favorites after auth is initialized
   await fetchRecommendations();
-  if (authStore.isAuthenticated) {
-    await loadUserCollections();
-  }
 });
 
 // Watch for auth changes
 watch(() => authStore.isLoggedIn, async (loggedIn) => {
   if (loggedIn) {
-    await loadUserCollections();
+    await loadFavorites();
   } else {
     favorites.value = {};
     savedItems.value = {};
