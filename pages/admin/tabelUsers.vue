@@ -243,7 +243,7 @@
 </div>
   
         <!-- Pagination -->
-        <div class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200">
+        <!-- <div class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200">
           <div class="flex-1 flex justify-between items-center sm:hidden">
             <button
               @click="goToPrevPage"
@@ -296,7 +296,7 @@
               </nav>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   
