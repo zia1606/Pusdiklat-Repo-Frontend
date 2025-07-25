@@ -76,13 +76,10 @@ const handleResetPassword = async () => {
   successMessage.value = ''
   
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/forgot-password-act`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/forgot-password-act', {
       method: 'POST',
-      body: JSON.stringify(form.value),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+      body: form.value
     })
 
     if (response.status) {

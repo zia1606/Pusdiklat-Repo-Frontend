@@ -90,10 +90,11 @@
     loading.value = true
     
     try {
-      const response = await $fetch('http://127.0.0.1:8000/api/login', {
-        method: 'POST',
-        body: form.value
-      })
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/login', {
+         method: 'POST',
+         body: form.value
+       })
   
       if (response?.status === true && response.data?.token) {
         authStore.setAuth({

@@ -1,33 +1,32 @@
 // composables/useApi.js
-import { useUnifiedAuthStore } from '~/stores/unifiedAuth'
-
 export const useApi = () => {
+  const { apiRequest } = useApiRequest()
   const authStore = useUnifiedAuthStore()
-  const { public: { apiBaseUrl } } = useRuntimeConfig();
-  const apiFetch = async (url, options = {}) => {
+
+  const apiCall = async (endpoint, options = {}) => {
+    const url = `/api${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
+    
     const headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      ...(authStore.token && { 'Authorization': `Bearer ${authStore.token}` }),
       ...options.headers
     }
-
-    try {
-      return await $fetch(url, {
-        baseURL: `${apiBaseUrl}/api`,
-        ...options,
-        headers
-      })
-    } catch (error) {
-      if (error.status === 401) {
-        authStore.clearAuth()
-        navigateTo('/auth/login')
-      }
-      throw error
+    
+    // Add Authorization header only if token exists (for token-based auth)
+    if (authStore.token) {
+      headers.Authorization = `Bearer ${authStore.token}`
     }
+    
+    const fetchOptions = {
+      ...options,
+      headers
+    }
+    
+    return await apiRequest(url, fetchOptions)
   }
 
-  return {
-    apiFetch
+  // Maintain backward compatibility
+  const apiFetch = async (url, options = {}) => {
+    return await apiCall(url, options)
   }
+
+  return { apiCall, apiFetch }
 }

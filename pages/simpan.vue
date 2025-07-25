@@ -159,15 +159,13 @@
     error.value = null;
   
     try {
-      const response = await $fetch('http://127.0.0.1:8000/api/simpan-koleksi', {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`
-        },
-        params: {
-          page: currentPage.value,
-          per_page: perPage
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/simpan-koleksi', {
+         params: {
+           page: currentPage.value,
+           per_page: perPage
+         }
+       });
   
       if (response.success) {
         simpan.value = response.data;
@@ -195,12 +193,10 @@
     if (!confirm('Apakah Anda yakin ingin menghapus dari simpan?')) return;
   
     try {
-      await $fetch(`http://127.0.0.1:8000/api/simpan-koleksi/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       await apiRequest(`/api/simpan-koleksi/${id}`, {
+         method: 'DELETE'
+       });
   
       // Refresh data setelah menghapus
       await fetchSimpan();
@@ -219,12 +215,10 @@
       // Anda perlu membuat endpoint khusus untuk ini di backend
       // Contoh: DELETE /api/simpan-koleksi/clear-all
       for (const item of simpan.value) {
-        await $fetch(`http://127.0.0.1:8000/api/simpan-koleksi/${item.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`
-          }
-        });
+        const { apiRequest } = useApiRequest()
+         await apiRequest(`/api/simpan-koleksi/${item.id}`, {
+           method: 'DELETE'
+         });
       }
   
       // Refresh data setelah menghapus

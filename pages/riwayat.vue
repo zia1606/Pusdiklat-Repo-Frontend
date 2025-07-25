@@ -283,10 +283,8 @@ const fetchRiwayat = async () => {
   error.value = null;
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/riwayat-baca`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      },
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/riwayat-baca', {
       params: {
         page: currentPage.value,
         per_page: perPage
@@ -346,11 +344,9 @@ const deleteRiwayat = async () => {
   showDeleteModal.value = false
   
   try {
-    await $fetch(`${apiBaseUrl}/api/riwayat-baca/${itemToDelete.value}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      }
+    const { apiRequest } = useApiRequest()
+    await apiRequest(`/api/riwayat-baca/${itemToDelete.value}`, {
+      method: 'DELETE'
     })
 
     await fetchRiwayat()
@@ -377,11 +373,9 @@ const clearAllHistory = async () => {
   showClearAllModal.value = false
   
   try {
-    await $fetch(`${apiBaseUrl}/api/riwayat-baca/clear`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      }
+    const { apiRequest } = useApiRequest()
+    await apiRequest('/api/riwayat-baca/clear', {
+      method: 'DELETE'
     })
 
     await fetchRiwayat()
@@ -415,8 +409,8 @@ const cancelClearAll = () => {
     const pdfViewerUrl = `/detail/pdf-view/${id}?t=${timestamp}`;
     
     try {
-      await axios.get(`${apiBaseUrl}/api/koleksi/koleksi/${id}/pdf`, {
-        headers: { Authorization: `Bearer ${authStore.token}` },
+      const { apiRequest } = useApiRequest()
+      await apiRequest(`/api/koleksi/koleksi/${id}/pdf`, {
         responseType: 'arraybuffer'
       });
     } catch (error) {

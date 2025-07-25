@@ -657,12 +657,8 @@ const fetchKategoriBangKom = async () => {
   }
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/kategori-bang-kom')
     kategoriBangKomList.value = response.data || []
   } catch (error) {
     console.error('Gagal mengambil data kategori bang kom:', error)
@@ -683,12 +679,8 @@ const fetchJenisDokumen = async () => {
   }
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/jenis-dokumen')
     jenisDokumenList.value = response.data || []
   } catch (error) {
     console.error('Gagal mengambil data jenis dokumen:', error)
@@ -820,12 +812,10 @@ const saveKoleksi = async () => {
   }
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/koleksi`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/koleksi', {
       method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      }
+      body: formData
     })
     
     showToast('success', response.message || 'Koleksi berhasil disimpan')

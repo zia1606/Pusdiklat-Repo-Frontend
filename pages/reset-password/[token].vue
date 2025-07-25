@@ -219,7 +219,8 @@ const validateToken = async () => {
   errorMessage.value = ''
   
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/validasi-forgot-password/${form.value.token}`)
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest(`/api/validasi-forgot-password/${form.value.token}`)
     
     console.log('Response validasi token:', response) // Debug
     
@@ -279,13 +280,10 @@ const handleResetPassword = async () => {
     
     console.log('Payload yang akan dikirim:', payload) // Debug
 
-    const response = await $fetch(`${apiBaseUrl}/api/reset-password-act`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/reset-password-act', {
       method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
+      body: payload
     })
 
     if (response.status) {

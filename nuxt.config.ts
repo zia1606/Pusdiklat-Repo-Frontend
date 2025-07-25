@@ -17,7 +17,8 @@ export default defineNuxtConfig({
     ...(process.env.NODE_ENV === 'development' && {
       devProxy: {
         '/api': {
-          target: 'http://localhost:8000',
+          // target: 'http://localhost:8000',
+          target: 'https://gojags-lib.web.bps.go.id/backend',
           changeOrigin: true,
         }
       }
@@ -41,6 +42,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://gojags-lib.web.bps.go.id/backend',
+      // apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
     },
   },
 })

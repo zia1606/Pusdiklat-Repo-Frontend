@@ -667,12 +667,9 @@ const handleRegisterAdmin = async () => {
     registerLoading.value = true
     registerError.value = ''
     
-    const response = await $fetch(`${apiBaseUrl}/api/register/admin`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/register/admin', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      },
       body: {
         name: registerForm.value.name,
         email: registerForm.value.email
@@ -740,13 +737,8 @@ const formatDate = (dateString) => {
 const fetchUsers = async () => {
   try {
     isLoading.value = true;
-    const response = await $fetch(`${apiBaseUrl}/api/users`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    });
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/users');
     
     if (response.status) {
       users.value = response.data;
@@ -769,12 +761,8 @@ const fetchUsers = async () => {
 // Fetch available roles
 const fetchRoles = async () => {
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/roles`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/roles')
     
     if (response.status) {
       availableRoles.value = response.data
@@ -869,15 +857,12 @@ const updateUserRole = async () => {
 
   updatingRole.value = true;
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/users/${userForRoleChange.value.id}/role`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest(`/api/users/${userForRoleChange.value.id}/role`, {
       method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+      body: {
         role_id: userForRoleChange.value.newRoleId
-      })
+      }
     });
     
     if (response.status) {
@@ -913,11 +898,9 @@ const confirmDelete = async () => {
   
   isDeleting.value = true
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/users/${userToDelete.value}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`
-      }
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest(`/api/users/${userToDelete.value}`, {
+      method: 'DELETE'
     })
     
     if (response.status) {
@@ -956,15 +939,12 @@ const confirmBulkDelete = async () => {
 
   isDeleting.value = true
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/users/bulk-delete`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/users/bulk-delete', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+      body: {
         user_ids: selectedItems.value
-      })
+      }
     })
     
     if (response.status) {

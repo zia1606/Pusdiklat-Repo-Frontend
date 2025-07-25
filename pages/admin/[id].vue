@@ -463,12 +463,8 @@ onMounted(async () => {
 const getKoleksi = async (id) => {
   isLoading.value = true
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/koleksi/${id}/edit`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest(`/api/koleksi/${id}/edit`)
     
     if (response.koleksi) {
       const koleksiData = response.koleksi
@@ -512,12 +508,8 @@ const fetchKategoriBangKom = async () => {
   }
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/kategori-bang-kom')
     kategoriBangKomList.value = response.data || []
   } catch (error) {
     console.error('Gagal mengambil data kategori bang kom:', error)
@@ -538,12 +530,8 @@ const fetchJenisDokumen = async () => {
   }
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest('/api/jenis-dokumen')
     jenisDokumenList.value = response.data || []
   } catch (error) {
     console.error('Gagal mengambil data jenis dokumen:', error)
@@ -676,13 +664,10 @@ const editKoleksi = async () => {
   }
 
   try {
-    const response = await $fetch(`${apiBaseUrl}/api/koleksi/${koleksiId.value}`, {
+    const { apiRequest } = useApiRequest()
+    const response = await apiRequest(`/api/koleksi/${koleksiId.value}`, {
       method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
+      body: formData
     })
     
     if (response.message) {

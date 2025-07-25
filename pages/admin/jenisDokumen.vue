@@ -285,12 +285,8 @@ const fetchJenisDokumen = async () => {
     }
 
     try {
-        const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`,
-            'Accept': 'application/json'
-          }
-        });
+        const { apiRequest } = useApiRequest()
+         const response = await apiRequest('/api/jenis-dokumen');
         jenisDokumen.value = response.data;
     } catch (error) {
         console.error('Error fetching jenis dokumen:', error);
@@ -311,12 +307,8 @@ const fetchDistribusiJenis = async () => {
   }
 
   try {
-      const response = await $fetch(`${apiBaseUrl}/api/koleksi/distribusi-jenis`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/koleksi/distribusi-jenis');
       distribusiJenis.value = response.data;
   } catch (error) {
       console.error('Error fetching distribusi jenis:', error);
@@ -359,14 +351,11 @@ const addJenisDokumen = async () => {
 
     try {
         isSubmitting.value = true;
-        const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen`, {
-          method: 'POST',
-          body: form.value,
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`,
-            'Accept': 'application/json'
-          }
-        });
+        const { apiRequest } = useApiRequest()
+         const response = await apiRequest('/api/jenis-dokumen', {
+           method: 'POST',
+           body: form.value
+         });
         jenisDokumen.value.push(response.data);
         closeModal();
         showToast('success', 'Jenis dokumen berhasil ditambahkan');
@@ -398,14 +387,11 @@ const updateJenisDokumen = async () => {
 
     try {
         isSubmitting.value = true;
-        const response = await $fetch(`${apiBaseUrl}/api/jenis-dokumen/${form.value.id}`, {
-          method: 'PUT',
-          body: form.value,
-          headers: {
-            'Authorization': `Bearer ${authStore.token}`,
-            'Accept': 'application/json'
-          }
-        });
+        const { apiRequest } = useApiRequest()
+         const response = await apiRequest(`/api/jenis-dokumen/${form.value.id}`, {
+           method: 'PUT',
+           body: form.value
+         });
         const index = jenisDokumen.value.findIndex(k => k.id === form.value.id);
         jenisDokumen.value[index] = response.data;
         closeModal();
@@ -445,13 +431,10 @@ const deleteJenisDokumen = async () => {
 
   try {
       isDeleting.value = true;
-      await $fetch(`${apiBaseUrl}/api/jenis-dokumen/${itemToDelete.value}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       await apiRequest(`/api/jenis-dokumen/${itemToDelete.value}`, {
+         method: 'DELETE'
+       });
       jenisDokumen.value = jenisDokumen.value.filter(k => k.id !== itemToDelete.value);
       showDeleteModal.value = false;
       showToast('success', 'Jenis dokumen berhasil dihapus');

@@ -276,12 +276,8 @@ const fetchKategori = async () => {
   }
 
   try {
-      const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/kategori-bang-kom');
       kategori.value = response.data;
   } catch (error) {
       console.error('Error fetching kategori:', error);
@@ -302,12 +298,8 @@ const fetchDistribusiKategori = async () => {
   }
 
   try {
-      const response = await $fetch(`${apiBaseUrl}/api/koleksi/distribusi-kategori`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/koleksi/distribusi-kategori');
       distribusiKategori.value = response.data;
   } catch (error) {
       console.error('Error fetching distribusi kategori:', error);
@@ -350,14 +342,11 @@ const addKategori = async () => {
 
   try {
       isSubmitting.value = true;
-      const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom`, {
-        method: 'POST',
-        body: form.value,
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/kategori-bang-kom', {
+         method: 'POST',
+         body: form.value
+       });
       kategori.value.push(response.data);
       closeModal();
       showToast('success', 'Kategori berhasil ditambahkan');
@@ -389,14 +378,11 @@ const updateKategori = async () => {
 
   try {
       isSubmitting.value = true;
-      const response = await $fetch(`${apiBaseUrl}/api/kategori-bang-kom/${form.value.id}`, {
-        method: 'PUT',
-        body: form.value,
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest(`/api/kategori-bang-kom/${form.value.id}`, {
+         method: 'PUT',
+         body: form.value
+       });
       const index = kategori.value.findIndex(k => k.id === form.value.id);
       kategori.value[index] = response.data;
       closeModal();
@@ -436,13 +422,10 @@ const deleteKategori = async () => {
 
   try {
       isDeleting.value = true;
-      await $fetch(`${apiBaseUrl}/api/kategori-bang-kom/${itemToDelete.value}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      });
+      const { apiRequest } = useApiRequest()
+       await apiRequest(`/api/kategori-bang-kom/${itemToDelete.value}`, {
+         method: 'DELETE'
+       });
       kategori.value = kategori.value.filter(k => k.id !== itemToDelete.value);
       showDeleteModal.value = false;
       showToast('success', 'Kategori berhasil dihapus');

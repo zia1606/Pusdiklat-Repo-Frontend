@@ -396,7 +396,7 @@ onMounted(async () => {
   initCharts()
 })
 
-// Fetch functions menggunakan $fetch dengan auth headers
+// Fetch functions menggunakan useApiRequest composable
 const fetchStats = async () => {
   if (!authStore.isAuthenticated) {
     await navigateTo('/auth/login')
@@ -404,31 +404,12 @@ const fetchStats = async () => {
   }
 
   try {
+    const { apiRequest } = useApiRequest()
     const [koleksiRes, bestRes, usersRes, viewsRes] = await Promise.all([
-      $fetch(`${apiBaseUrl}/api/koleksi`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      }),
-      $fetch(`${apiBaseUrl}/api/koleksi/best-collections`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      }),
-      $fetch(`${apiBaseUrl}/api/users/count`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      }),
-      $fetch(`${apiBaseUrl}/api/koleksi/total-views`, {
-        headers: {
-          'Authorization': `Bearer ${authStore.token}`,
-          'Accept': 'application/json'
-        }
-      })
+      apiRequest('/api/koleksi'),
+      apiRequest('/api/koleksi/best-collections'),
+      apiRequest('/api/users/count'),
+      apiRequest('/api/koleksi/total-views')
     ])
 
     stats.value = {
@@ -456,12 +437,8 @@ const fetchBestCollections = async () => {
 
   loadingBest.value = true
   try {
-    const res = await $fetch(`${apiBaseUrl}/api/koleksi/best-collections`, {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
-    })
+    const { apiRequest } = useApiRequest()
+    const res = await apiRequest('/api/koleksi/best-collections')
     bestCollections.value = res.data || []
     stats.value.best_collections = bestCollections.value.length
   } catch (error) {
@@ -498,12 +475,9 @@ const unmarkAsBest = async () => {
   }
 
   try {
-    await $fetch(`${apiBaseUrl}/api/koleksi/${itemToUnmark.value}/unmark-as-best`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Accept': 'application/json'
-      }
+    const { apiRequest } = useApiRequest()
+    await apiRequest(`/api/koleksi/${itemToUnmark.value}/unmark-as-best`, {
+      method: 'POST'
     })
     
     await fetchBestCollections()

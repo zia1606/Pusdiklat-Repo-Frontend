@@ -37,11 +37,8 @@ export const useAdminAuthStore = defineStore('adminAuth', () => {
     if (!token.value) return false
       
     try {
-      const response = await $fetch('http://127.0.0.1:8000/api/check-auth', {
-        headers: {
-          Authorization: `Bearer ${token.value}`
-        }
-      })
+      const { apiRequest } = useApiRequest()
+       const response = await apiRequest('/api/check-auth')
       
       return response?.status === true || response?.valid === true
     } catch (error) {
@@ -54,12 +51,10 @@ export const useAdminAuthStore = defineStore('adminAuth', () => {
   async function logout() {
     try {
       if (token.value) {
-        await $fetch('http://127.0.0.1:8000/api/admin/logout', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token.value}`
-          }
-        })
+        const { apiRequest } = useApiRequest()
+         await apiRequest('/api/admin/logout', {
+           method: 'POST'
+         })
       }
     } catch (error) {
       console.error('Admin logout error:', error)
