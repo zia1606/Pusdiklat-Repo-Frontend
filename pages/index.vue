@@ -9,7 +9,7 @@
           <div class="w-full mx-auto px-4 lg:px-20 overflow-hidden">
             <div class="w-full mx-auto lg:px-8 lg:items-center">
               <div class="text-center">
-                <img src="https://i.ibb.co/8D7rcYv/download.webp" width="2880" height="1358" decoding="async" data-nimg="1" class="w-full h-full object-cover m-auto absolute inset-0 pointer-events-none" loading="lazy" style="color:transparent">
+                <img src="/img/bg.webp" width="2880" height="1358" decoding="async" data-nimg="1" class="w-full h-full object-cover m-auto absolute inset-0 pointer-events-none" loading="lazy" style="color:transparent">
                 <h1 class="text-yellow-400 font-bold text-6xl lg:text-6xl leading-tight">Repository</h1>
                 <h2 class="text-white font-bold text-4xl lg:text-5xl leading-tight mb-3">Pusdiklat Badan Pusat Statistik</h2>
                <!-- Teks yang berubah-ubah -->

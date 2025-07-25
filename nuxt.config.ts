@@ -13,12 +13,15 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/image', '@pinia/nuxt'],
   nitro: {
-    devProxy: {
-      '/api': {
-        target: 'https://pusdiklat-repo-backend.zeabur.app', // Sesuaikan dengan URL backend Anda
-        changeOrigin: true,
+    // devProxy hanya untuk development
+    ...(process.env.NODE_ENV === 'development' && {
+      devProxy: {
+        '/api': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+        }
       }
-    }
+    })
   },
 
   // Tambahkan konfigurasi head di sini
@@ -37,7 +40,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://pusdiklat-repo-backend.zeabur.app',
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://gojags-lib.web.bps.go.id/backend',
     },
   },
 })
