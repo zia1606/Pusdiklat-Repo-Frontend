@@ -15,8 +15,8 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': {
-        target: 'https://pusdiklat-repo-backend.zeabur.app', // Sesuaikan dengan URL backend Anda
-        // target: 'http://127.0.0.1:8000', // Sesuaikan dengan URL backend Anda
+        target: 'https://pusdiklat-repo-backend.zeabur.app', 
+        // target: 'http://127.0.0.1:8000', 
         changeOrigin: true,
       }
     }

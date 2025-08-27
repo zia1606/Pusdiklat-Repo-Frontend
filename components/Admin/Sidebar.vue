@@ -68,7 +68,7 @@
           <button
             @click="toggleKoleksiDropdown"
             class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg text-gray-700 focus:outline-none"
-            aria-expanded="isKoleksiDropdownOpen"
+            :aria-expanded="isKoleksiDropdownOpen"
             aria-controls="koleksi-dropdown"
           >
             <div class="flex items-center">
@@ -110,7 +110,7 @@
           <button
             @click="toggleKategoriDropdown"
             class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg text-gray-700 focus:outline-none"
-            aria-expanded="isKategoriDropdownOpen"
+            :aria-expanded="isKategoriDropdownOpen"
             aria-controls="kategori-dropdown"
           >
             <div class="flex items-center">
@@ -148,19 +148,46 @@
         </div>
 
         <!-- Kelola Pengguna -->
-        <NuxtLink 
-          to="/admin/tabelUsers"
-          :class="{
-            'group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all': true,
-            'bg-blue-50 text-blue-600': isTabelUsersActive,
-            'text-gray-600 hover:bg-gray-100': !isTabelUsersActive
-          }"
-        >
-          <svg class="h-5 w-5 mr-3" :class="{'text-blue-500': isTabelUsersActive, 'text-gray-500': !isTabelUsersActive}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-          Kelola Pengguna
-        </NuxtLink>
+        <div class="space-y-1">
+          <button
+            @click="togglePenggunaDropdown"
+            class="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-lg text-gray-700 focus:outline-none"
+            :aria-expanded="isPenggunaDropdownOpen"
+            aria-controls="pengguna-dropdown"
+          >
+            <div class="flex items-center">
+              <svg class="h-5 w-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              Kelola Pengguna
+            </div>
+            <svg :class="{'rotate-180': isPenggunaDropdownOpen, 'rotate-0': !isPenggunaDropdownOpen}" class="ml-2 h-5 w-5 transform transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <div v-if="isPenggunaDropdownOpen" class="space-y-1 pl-11" id="pengguna-dropdown">
+            <NuxtLink 
+              to="/admin/tabelAdmin"
+              :class="{
+                'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all': true,
+                'bg-blue-50 text-blue-600': isAdministratorActive,
+                'text-gray-600 hover:bg-gray-100': !isAdministratorActive
+              }"
+            >
+              Administrator
+            </NuxtLink>
+            <NuxtLink 
+              to="/admin/tabelUsers"
+              :class="{
+                'flex items-center px-4 py-2 text-sm font-medium rounded-md transition-all': true,
+                'bg-blue-50 text-blue-600': isTabelUsersActive,
+                'text-gray-600 hover:bg-gray-100': !isTabelUsersActive
+              }"
+            >
+              Users
+            </NuxtLink>
+          </div>
+        </div>
       </div>
     </nav>
   </aside>
@@ -174,6 +201,7 @@ const route = useRoute()
 
 const isKoleksiDropdownOpen = ref(true)
 const isKategoriDropdownOpen = ref(true)
+const isPenggunaDropdownOpen = ref(true)
 
 const props = defineProps({
   show: {
@@ -192,6 +220,7 @@ const isFormKoleksiActive = computed(() => route.path === '/admin/formKoleksi')
 const isTabelUsersActive = computed(() => route.path === '/admin/tabelUsers')
 const isKategoriBangKomActive = computed(() => route.path === '/admin/kategoriBangKom')
 const isJenisDokumenActive = computed(() => route.path === '/admin/jenisDokumen')
+const isAdministratorActive = computed(() => route.path === '/admin/tabelAdmin')
 
 // Methods
 const toggleSidebar = () => {
@@ -208,5 +237,9 @@ const toggleKoleksiDropdown = () => {
 
 const toggleKategoriDropdown = () => {
   isKategoriDropdownOpen.value = !isKategoriDropdownOpen.value
+}
+
+const togglePenggunaDropdown = () => {
+  isPenggunaDropdownOpen.value = !isPenggunaDropdownOpen.value
 }
 </script>

@@ -63,7 +63,7 @@
                   <!-- Tahun Terbit -->
                   <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">
-                      Tahun Terbit <span class="text-red-500">*</span>
+                      Tahun Penyelenggaraan <span class="text-red-500">*</span>
                     </label>
                     <input 
                       v-model="koleksi.tahun_terbit" 
