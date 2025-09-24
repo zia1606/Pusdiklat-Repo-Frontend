@@ -1,6 +1,5 @@
 <template>
     <div class="bg-gray-100">
-      <NuxtLayout>
         <!-- Banner dan Search -->
         <div class="relative">
           <banner />
@@ -119,9 +118,8 @@
             </div>
           </div>
         </main>
-      </NuxtLayout>
     </div>
-  </template>
+</template>
   
   <script setup>
   import { ref, onMounted } from 'vue';

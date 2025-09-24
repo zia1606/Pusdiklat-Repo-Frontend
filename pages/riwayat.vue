@@ -1,6 +1,5 @@
 <template>
     <div class="bg-gray-100">
-      <NuxtLayout>
         <!-- Banner dan Search -->
         <div class="relative">
           <banner />
@@ -144,7 +143,6 @@
   </div>
 </div>
         </main>
-      </NuxtLayout>
 
       <!-- Single Delete Confirmation Modal -->
 <div v-if="showDeleteModal" class="fixed inset-0 overflow-y-auto z-50">

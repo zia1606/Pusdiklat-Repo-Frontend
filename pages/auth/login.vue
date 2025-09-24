@@ -109,11 +109,6 @@
         <div v-if="errorMessage" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {{ errorMessage }}
         </div>
-
-        <!-- Account Deactivated Message -->
-<div v-if="accountDeactivated" class="mb-4 p-3 bg-orange-100 border border-orange-400 text-orange-700 rounded">
-  {{ accountDeactivated }}
-</div>
         
         <!-- Success Message -->
         <div v-if="successMessage" class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
@@ -169,7 +164,6 @@ const errors = ref({
   general: ''
 })
 
-const accountDeactivated = ref('')
 const resetErrors = () => {
   errors.value = {
     email: '',
@@ -177,7 +171,6 @@ const resetErrors = () => {
     general: ''
   }
   errorMessage.value = ''
-  accountDeactivated.value = ''
 }
 
 // Handle Google Login
@@ -212,28 +205,39 @@ onMounted(() => {
   }
 })
 
-// Handle manual login
-// Di script setup login.vue
+// Handle manual login with Laravel Sanctum stateful authentication
 const handleLogin = async () => {
   loading.value = true
   resetErrors()
   errorMessage.value = ''
   successMessage.value = ''
 
+  const { apiRequest, initializeCsrf } = useApiRequest()
+
   try {
-    const response = await $fetch(`http://127.0.0.1:8000/api/login`, {
+    // Step 1: Initialize CSRF cookie for Sanctum stateful authentication
+    await initializeCsrf()
+    
+    // Step 2: Perform login with credentials
+    const response = await apiRequest('/login', {
       method: 'POST',
       body: form.value
     })
     
     if (response.status) {
-      authStore.setAuth({
-        token: response.data.token,
-        user: response.data.user,
-        role: response.data.user.role.name.toLowerCase()
+      // Step 3: Get authenticated user data
+      const userResponse = await apiRequest('/api/user', {
+        method: 'GET'
       })
       
-      // Redirect admin ke dashboard, tapi biarkan mereka bisa akses halaman user
+      // Store auth data (no token needed for stateful auth)
+      authStore.setAuth({
+        token: null, // No token needed for stateful auth
+        user: userResponse.data || userResponse,
+        role: (userResponse.data?.role?.name || userResponse.role?.name || 'user').toLowerCase()
+      })
+      
+      // Redirect based on role
       if (authStore.isAdmin) {
         await navigateTo('/admin/dashboard')
       } else {
@@ -241,17 +245,16 @@ const handleLogin = async () => {
       }
     }
   } catch (error) {
+    console.error('Login error:', error)
     // Handle error response dari backend
     if (error.data) {
-      if (error.data.message === 'Invalid email') {
+      if (error.data.message === 'Invalid email' || error.data.message === 'These credentials do not match our records.') {
         errors.value.email = 'Email tidak valid'
       } else if (error.data.message === 'Invalid Password') {
         errors.value.password = 'Password tidak valid'
-      } else if (error.data.message.includes('deactivated') || error.data.message.includes('dinonaktifkan')) {
-        accountDeactivated.value = 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.'
       } else {
         errorMessage.value = error.data.message || 'Terjadi kesalahan saat login'
-      } 
+      }
     } else {
       errorMessage.value = 'Terjadi kesalahan pada server'
     }

@@ -1,32 +1,30 @@
 <template>
   <div class="bg-soft-white">
-    <NuxtLayout>
-      <div class="relative">
-        <section class="bg-gradient-to-b from-blue-900 to-blue-800 pt-20 pb-10">
-          <div class="w-full mx-auto px-4 lg:px-20 overflow-hidden">
-            <div class="w-full mx-auto lg:px-8 lg:items-center">
-              <div class="text-center">
-                <img src="/img/download.webp" width="2880" height="1358" decoding="async" data-nimg="1" class="w-full h-full object-cover m-auto absolute inset-0 pointer-events-none" loading="lazy" style="color:transparent">
-                <h1 class="text-yellow-400 font-bold text-6xl lg:text-6xl leading-tight">Repository</h1>
-                <h2 class="text-white font-bold text-4xl lg:text-5xl leading-tight mb-3">Pusdiklat Badan Pusat Statistik</h2>
-                <div class="h-10 flex items-center justify-center">
-                  <p class="text-white text-lg mb-0 sm:px-10 md:px-40 transition-opacity duration-1000" v-html="currentText"></p>
-                </div>
+    <div class="relative">
+      <section class="bg-gradient-to-b from-blue-900 to-blue-800 pt-20 pb-10">
+        <div class="w-full mx-auto px-4 lg:px-20 overflow-hidden">
+          <div class="w-full mx-auto lg:px-8 lg:items-center">
+            <div class="text-center">
+              <img src="/img/download.webp" width="2880" height="1358" decoding="async" data-nimg="1" class="w-full h-full object-cover m-auto absolute inset-0 pointer-events-none" loading="lazy" style="color:transparent">
+              <h1 class="text-yellow-400 font-bold text-6xl lg:text-6xl leading-tight">Repository</h1>
+              <h2 class="text-white font-bold text-4xl lg:text-5xl leading-tight mb-3">Pusdiklat Badan Pusat Statistik</h2>
+              <div class="h-10 flex items-center justify-center">
+                <p class="text-white text-lg mb-0 sm:px-10 md:px-40 transition-opacity duration-1000" v-html="currentText"></p>
               </div>
-              
-              <div class="pt-20 pb-12">
-                <search @search="handleSearch" />
-              </div>
-          
             </div>
+            
+            <div class="pt-20 pb-12">
+              <search @search="handleSearch" />
+            </div>
+        
           </div>
-        </section>
-      </div>          
-      <CardKoleksiTerbaru/>
-      <KolomKoleksiBeranda/>
-    </NuxtLayout>
-    </div>
-  </template> 
+        </div>
+      </section>
+    </div>          
+    <CardKoleksiTerbaru/>
+    <KolomKoleksiBeranda/>
+  </div>
+</template> 
   
 <script setup>
   import { useRouter } from 'vue-router';
