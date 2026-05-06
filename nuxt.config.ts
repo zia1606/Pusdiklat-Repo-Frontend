@@ -15,8 +15,8 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': {
-        target: 'https://pusdiklat-repo-backend.zeabur.app', 
-        // target: 'http://127.0.0.1:8000', 
+        // target: 'http://127.0.0.1:8000',
+        target: 'https://gojags-lib.web.bps.go.id/backend',
         changeOrigin: true,
       }
     }
@@ -38,7 +38,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://pusdiklat-repo-backend.zeabur.app',
+      // apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://gojags-lib.web.bps.go.id/backend',
     },
   },
 })
