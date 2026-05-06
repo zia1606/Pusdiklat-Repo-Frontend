@@ -13,13 +13,23 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/image', '@pinia/nuxt'],
   nitro: {
+<<<<<<< HEAD
     devProxy: {
       '/api': {
         // target: 'http://127.0.0.1:8000',
         target: 'https://gojags-lib.web.bps.go.id/backend',
         changeOrigin: true,
+=======
+    // devProxy hanya untuk development
+    ...(process.env.NODE_ENV === 'development' && {
+      devProxy: {
+        '/api': {
+          target: 'http://localhost:8000',
+          changeOrigin: true,
+        }
+>>>>>>> ab7ef2a2acc161877f8ac6d7e9a6aac129c8e41c
       }
-    }
+    })
   },
 
   // Tambahkan konfigurasi head di sini
@@ -38,7 +48,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+<<<<<<< HEAD
       // apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+=======
+>>>>>>> ab7ef2a2acc161877f8ac6d7e9a6aac129c8e41c
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://gojags-lib.web.bps.go.id/backend',
     },
   },

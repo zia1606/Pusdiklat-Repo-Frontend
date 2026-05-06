@@ -1,6 +1,5 @@
 <template>
   <div class="bg-soft-white min-h-screen">
-    <NuxtLayout>
       <!-- Header Section -->
       <section class="bg-gradient-to-b from-blue-900 to-blue-800 pt-20 pb-10">
         <div class="w-full mx-auto px-4 lg:px-20">
@@ -300,7 +299,6 @@
       </div>
     </div>
   </div>
-    </NuxtLayout>
   </div>
 </template>
 
