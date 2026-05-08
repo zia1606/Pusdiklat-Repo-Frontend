@@ -67,8 +67,8 @@
                         <div class="flex-shrink-0 w-24 sm:w-28 relative">
                           <div class="aspect-[2/3] bg-amber-50 rounded-lg overflow-hidden border border-gray-100 shadow-sm flex items-center justify-center">
                             <img 
-                              v-if="item.cover_image" 
-                              :src="item.cover_image" 
+                              v-if="item.thumbnail" 
+                              :src="item.thumbnail" 
                               :alt="item.judul"
                               class="w-full h-full object-cover"
                             />
@@ -205,8 +205,8 @@
                         <div class="flex-shrink-0 w-24 sm:w-28 relative">
                           <div class="aspect-[2/3] bg-red-50 rounded-lg overflow-hidden border border-gray-100 shadow-sm flex items-center justify-center">
                             <img 
-                              v-if="item.cover_image" 
-                              :src="item.cover_image" 
+                              v-if="item.thumbnail" 
+                              :src="item.thumbnail" 
                               :alt="item.judul"
                               class="w-full h-full object-cover"
                             />
@@ -295,8 +295,8 @@
                         <div class="flex-shrink-0 w-24 sm:w-28 relative">
                           <div class="aspect-[2/3] bg-amber-50 rounded-lg overflow-hidden border border-gray-100 shadow-sm flex items-center justify-center">
                             <img 
-                              v-if="item.cover_image" 
-                              :src="item.cover_image" 
+                              v-if="item.thumbnail" 
+                              :src="item.thumbnail" 
                               :alt="item.judul"
                               class="w-full h-full object-cover"
                             />
@@ -413,7 +413,7 @@
         tahun_terbit: item.tahun_terbit,
         views: item.views,
         isBestCollection: item.is_best_collection,
-        cover_image: item.cover_image,
+        thumbnail: item.thumbnail,
         is_active: item.is_active
       }))
     } catch (error) {
@@ -440,7 +440,7 @@
           views: item.views,
           tahun_terbit: item.tahun_terbit,
           isBestCollection: true,
-          cover_image: item.cover_image,
+          thumbnail: item.thumbnail,
           is_active: item.is_active
         }))
         showingBestCollection.value = true
@@ -456,7 +456,7 @@
             kategoris: item.kategoris,
             views: item.views,
             favorits_count: item.favorits_count,
-            cover_image: item.cover_image,
+            thumbnail: item.thumbnail,
             is_active: item.is_active
           }))
           showingBestCollection.value = false

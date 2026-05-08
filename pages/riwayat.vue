@@ -1,5 +1,6 @@
 <template>
     <div class="bg-gray-100">
+        <NuxtLayout>
         <!-- Banner dan Search -->
         <div class="relative">
           <banner />
@@ -227,6 +228,7 @@
 <!-- Toast Component -->
 <!-- <Toast /> -->
 
+        </NuxtLayout>
     </div>
   </template>
   

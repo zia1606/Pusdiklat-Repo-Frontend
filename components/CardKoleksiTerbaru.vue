@@ -92,8 +92,8 @@
           <!-- Thumbnail Image - Portrait Aspect Ratio -->
           <NuxtLink :to="`/detail/${card.id}`" class="block aspect-[2/3] w-full overflow-hidden relative group-hover:opacity-90 transition-opacity">
             <img 
-              v-if="card.cover_image" 
-              :src="card.cover_image" 
+              v-if="card.thumbnail" 
+              :src="card.thumbnail" 
               :alt="card.title"
               class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
             />
@@ -271,13 +271,15 @@ const { apiFetch } = useApi();
       cards.value = res.data.slice(0, TOTAL_CARDS).map(item => ({
         id: item.id,
         title: truncateText(item.judul, 50),
-        penulis: item.penulis || 'Penulis tidak tersedia',
+        penulis: item.penulis_list && item.penulis_list.length > 0 
+          ? item.penulis_list.map(p => p.nama).join(', ') 
+          : (item.penulis || 'Penulis tidak tersedia'),
         kategori: item.kategoriBangKom,
         jenisDokumen: item.jenis_dokumen,
         tahunTerbit: item.tahun_terbit,
         views: item.views,
         isBestCollection: item.is_best_collection,
-        cover_image: item.cover_image,
+        thumbnail: item.thumbnail,
         is_active: item.is_active
       }));
     } catch (error) {

@@ -27,6 +27,17 @@
                 <span :class="koleksi.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-3 py-1 rounded-full text-[10px] font-black uppercase">
                   {{ koleksi.is_active ? 'Aktif' : 'Non-Aktif' }}
                 </span>
+                <button 
+                  v-if="isEditing"
+                  @click="editForm.is_active = editForm.is_active === 1 ? 0 : 1"
+                  class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ml-2"
+                  :class="editForm.is_active ? 'bg-green-600' : 'bg-gray-200'"
+                >
+                  <span 
+                    class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                    :class="editForm.is_active ? 'translate-x-4' : 'translate-x-0'"
+                  ></span>
+                </button>
                 <button v-if="koleksi.is_best_collection" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-black uppercase">
                   ⭐ Best
                 </button>
@@ -243,8 +254,13 @@
                     <td class="px-8 py-6 text-xs font-black text-gray-400 uppercase tracking-widest w-1/3 border-r border-gray-100 align-top">Media & Berkas</td>
                     <td class="px-8 py-6">
                       <div class="space-y-4">
+                        <!-- Content Type Toggle (Removed YouTube) -->
+                        <div v-if="isEditing" class="hidden">
+                          <input type="radio" v-model="editForm.content_type" value="pdf">
+                        </div>
+
                         <!-- PDF Management -->
-                        <div class="flex flex-col gap-2">
+                        <div v-if="!isEditing ? (koleksi.dokumen_pdf) : true" class="flex flex-col gap-2">
                           <label class="text-[10px] font-black text-orange-600 uppercase tracking-widest">Berkas PDF</label>
                           <div class="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
                             <div class="flex items-center gap-3">
@@ -264,25 +280,13 @@
                               </button>
                               <input type="file" ref="pdfInput" accept=".pdf" class="hidden" @change="handlePdfChange" />
                             </template>
-                            <a v-else-if="koleksi.dokumen_pdf" :href="koleksi.dokumen_pdf" target="_blank" class="px-4 py-2 border border-gray-200 text-gray-600 rounded-xl text-[10px] font-black uppercase hover:bg-gray-50 transition-all">
+                            <button v-else-if="koleksi.dokumen_pdf" @click="viewPdf" class="px-4 py-2 border border-gray-200 text-gray-600 rounded-xl text-[10px] font-black uppercase hover:bg-gray-50 transition-all">
                               Lihat File
-                            </a>
+                            </button>
                           </div>
                         </div>
 
-                        <!-- YouTube Management -->
-                        <div class="flex flex-col gap-2">
-                          <label class="text-[10px] font-black text-red-600 uppercase tracking-widest">Link YouTube</label>
-                          <div class="p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
-                            <input v-if="isEditing" v-model="editForm.youtube_link" placeholder="https://youtube.com/watch?v=..." class="w-full border-b border-red-200 focus:border-red-500 outline-none text-sm font-bold bg-transparent" />
-                            <div v-else class="flex justify-between items-center">
-                              <span class="text-sm font-bold text-gray-800 truncate max-w-[300px]">{{ koleksi.youtube_link || '-' }}</span>
-                              <a v-if="koleksi.youtube_link" :href="koleksi.youtube_link" target="_blank" class="text-red-600 hover:text-red-800 transition-colors">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                              </a>
-                            </div>
-                          </div>
-                        </div>
+                        <!-- YouTube Management (Removed) -->
                       </div>
                     </td>
                   </tr>
@@ -345,8 +349,11 @@ const editForm = reactive({
   isbn: '', isbn_digital: '', issn: '', edisi_cetak: '', tempat_terbit: '',
   jml_hal_romawi: '', jml_hal_angka: '', youtube_link: '',
   kategori_ids: [], penulis_list: [],
-  thumbnail: null, dokumen_pdf: null
+  thumbnail: null, dokumen_pdf: null,
+  content_type: 'pdf', is_active: 1
 })
+
+// Watchers (Cleaned up YouTube logic)
 
 // Fields displayed in the loop
 const standardFields = [
@@ -400,7 +407,9 @@ const startEditing = () => {
     jml_hal_angka: k.jml_hal_angka, youtube_link: k.youtube_link,
     kategori_ids: (k.kategoris || []).map(c => c.id),
     penulis_list: [...(k.penulis_list || [])],
-    thumbnail: null, dokumen_pdf: null
+    thumbnail: null, dokumen_pdf: null,
+    content_type: 'pdf',
+    is_active: k.is_active
   })
   isEditing.value = true
 }
@@ -438,11 +447,16 @@ const saveChanges = async () => {
     // Add simple fields
     const allFields = ['judul','no_induk','tahun_terbit','penerbit','keywords','ringkasan',
       'ddc','cutter','call_number','Klasifikasi','kode','isbn','isbn_digital','issn',
-      'edisi_cetak','tempat_terbit','jml_hal_romawi','jml_hal_angka', 'youtube_link']
+      'edisi_cetak','tempat_terbit','jml_hal_romawi','jml_hal_angka']
     
     allFields.forEach(f => {
       formData.append(f, editForm[f] !== null && editForm[f] !== undefined ? editForm[f] : '')
     })
+
+    // Mutual exclusivity (Fixed to PDF only)
+    formData.append('content_type', 'pdf')
+    formData.append('youtube_link', '')
+    formData.append('is_active', editForm.is_active)
     
     // Arrays
     editForm.penulis_list.forEach(p => formData.append('penulis_ids[]', p.id))
@@ -477,6 +491,13 @@ const keywordsList = computed(() => {
   if (!koleksi.value?.keywords) return []
   return koleksi.value.keywords.split(',').map(s => s.trim()).filter(Boolean)
 })
+
+const viewPdf = async () => {
+  if (!koleksi.value?.id) return
+  const timestamp = Date.now()
+  const pdfViewerUrl = `/admin/pdf-view2/${koleksi.value.id}?t=${timestamp}`
+  window.open(pdfViewerUrl, '_blank')
+}
 
 const formatDate = (d) => {
   if (!d) return '-'

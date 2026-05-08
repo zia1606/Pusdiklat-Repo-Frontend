@@ -191,30 +191,19 @@
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Format & Unggah Konten</h3>
                   </div>
 
-                  <div class="space-y-4">
+                  <div class="space-y-4 hidden">
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
                       Pilih Tipe Konten <span class="text-red-500">*</span>
                     </label>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4">
                       <label 
-                        class="relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer"
-                        :class="koleksi.content_type === 'pdf' ? 'bg-blue-50 border-blue-600 text-blue-700 shadow-lg shadow-blue-100' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
+                        class="relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer bg-blue-50 border-blue-600 text-blue-700 shadow-lg shadow-blue-100"
                       >
                         <input type="radio" v-model="koleksi.content_type" value="pdf" class="sr-only">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                         <span class="text-xs font-bold uppercase tracking-widest">Dokumen PDF</span>
-                      </label>
-                      <label 
-                        class="relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer"
-                        :class="koleksi.content_type === 'youtube' ? 'bg-red-50 border-red-600 text-red-700 shadow-lg shadow-red-100' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
-                      >
-                        <input type="radio" v-model="koleksi.content_type" value="youtube" class="sr-only">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span class="text-xs font-bold uppercase tracking-widest">Video YouTube</span>
                       </label>
                     </div>
                   </div>
@@ -260,24 +249,70 @@
                     </div>
                   </div>
 
-                  <!-- YouTube Link Section -->
-                  <div v-if="koleksi.content_type === 'youtube'" class="animate-fadeIn space-y-2">
-                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">URL Video YouTube</label>
-                    <div class="relative group">
-                      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  <!-- YouTube Link Section (Removed) -->
+
+                  <!-- Thumbnail Upload -->
+                  <div class="space-y-4 pt-4 border-t border-gray-50">
+                    <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest ml-1 mb-2">Thumbnail / Cover Image</label>
+                    <div class="flex flex-col md:flex-row gap-6 items-start">
+                      <!-- Preview -->
+                      <div class="w-32 h-44 rounded-2xl bg-gray-100 border border-gray-100 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
+                        <img v-if="thumbnailPreview" :src="thumbnailPreview" class="w-full h-full object-cover" />
+                        <svg v-else class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <input 
-                        v-model="koleksi.youtube_link" 
-                        type="url" 
-                        placeholder="https://www.youtube.com/watch?v=..."
-                        class="block w-full pl-12 pr-5 py-4 bg-gray-50/50 border border-gray-100 rounded-2xl shadow-sm focus:ring-4 focus:ring-red-50 focus:border-red-500 focus:bg-white focus:outline-none transition-all duration-300 font-medium placeholder-gray-300"
-                      >
+                      
+                      <!-- Upload Area -->
+                      <div class="flex-1 w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-44 border-2 border-dashed border-gray-200 rounded-3xl cursor-pointer bg-gray-50/30 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 group">
+                          <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 text-blue-500 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <p class="text-xs text-gray-500 font-bold">Pilih foto sampul atau <span class="text-blue-600">Klik</span></p>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">JPG, PNG (Maks. 2MB)</p>
+                          </div>
+                          <input type="file" @change="handleThumbnailUpload" accept="image/*" class="hidden">
+                        </label>
+                        <button v-if="thumbnailPreview" @click="removeThumbnail" type="button" class="mt-2 text-[10px] font-black text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors">
+                          Hapus Sampul
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                  </div>
+                  
+                  <!-- Group 4: Pengaturan Status -->
+                  <div class="space-y-6 pt-4">
+                    <div class="flex items-center space-x-2 pb-2 border-b border-gray-50">
+                      <div class="h-6 w-1 bg-emerald-600 rounded-full"></div>
+                      <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em]">Pengaturan Status</h3>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-gray-50/50 border border-gray-100 rounded-2xl">
+                      <div>
+                        <p class="text-xs font-black text-gray-900 uppercase tracking-widest">Status Publikasi</p>
+                        <p class="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-widest italic">Tentukan apakah koleksi ini dapat dilihat publik</p>
+                      </div>
+                      <div class="flex items-center space-x-3">
+                        <span class="text-[10px] font-black uppercase tracking-widest" :class="koleksi.is_active ? 'text-emerald-600' : 'text-gray-400'">
+                          {{ koleksi.is_active ? 'Aktif' : 'Non-Aktif' }}
+                        </span>
+                        <button 
+                          type="button"
+                          @click="koleksi.is_active = koleksi.is_active === 1 ? 0 : 1"
+                          class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+                          :class="koleksi.is_active ? 'bg-emerald-600' : 'bg-gray-200'"
+                        >
+                          <span 
+                            class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                            :class="koleksi.is_active ? 'translate-x-5' : 'translate-x-0'"
+                          ></span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
                 <!-- Action Buttons -->
                 <div class="pt-8 flex items-center justify-end space-x-4 border-t border-gray-50">
@@ -383,9 +418,15 @@ const koleksi = reactive({
   penerbit: '',
   keywords: '',
   dokumen_pdf: null,
+  thumbnail: null,
   youtube_link: '',
-  content_type: '', // 'pdf' atau 'youtube'
+  content_type: 'pdf',
+  is_active: 1
 })
+
+// Watchers (Cleaned up YouTube logic)
+
+const thumbnailPreview = ref(null)
 
 const modalState = reactive({
   author: false,
@@ -433,8 +474,8 @@ const fetchKoleksiDetail = async () => {
     koleksi.tahun_terbit = data.tahun_terbit
     koleksi.penerbit = data.penerbit
     koleksi.keywords = data.keywords
-    koleksi.content_type = data.youtube_link ? 'youtube' : 'pdf'
-    koleksi.youtube_link = data.youtube_link
+    koleksi.content_type = 'pdf'
+    koleksi.is_active = data.is_active
     koleksi.ddc = data.ddc
     koleksi.cutter = data.cutter
     koleksi.call_number = data.call_number
@@ -449,6 +490,9 @@ const fetchKoleksiDetail = async () => {
 
     // Note: dokumen_pdf and thumbnail are handled as URLs usually, 
     // but in form we only show if they exist or allow new upload
+    if (data.thumbnail) {
+      thumbnailPreview.value = data.thumbnail
+    }
     // existingPdfUrl.value = data.dokumen_pdf
   } catch (error) {
     console.error('Failed to fetch collection detail:', error)
@@ -524,6 +568,19 @@ const handleFileUpload = (event) => {
   koleksi.dokumen_pdf = event.target.files[0];
 }
 
+const handleThumbnailUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    koleksi.thumbnail = file;
+    thumbnailPreview.value = URL.createObjectURL(file);
+  }
+}
+
+const removeThumbnail = () => {
+  koleksi.thumbnail = null;
+  thumbnailPreview.value = null;
+}
+
 const previewFile = () => {
   if (koleksi.dokumen_pdf) {
     const fileURL = URL.createObjectURL(koleksi.dokumen_pdf);
@@ -545,7 +602,14 @@ const saveKoleksi = async () => {
   formData.append('tahun_terbit', koleksi.tahun_terbit);
   formData.append('penerbit', koleksi.penerbit || '');
   formData.append('keywords', koleksi.keywords || '');
-  formData.append('content_type', koleksi.content_type);
+  formData.append('content_type', 'pdf');
+  formData.append('is_active', koleksi.is_active);
+  
+  if (koleksi.dokumen_pdf) {
+    formData.append('dokumen_pdf', koleksi.dokumen_pdf);
+  }
+  formData.append('youtube_link', '');
+
   formData.append('ddc', koleksi.ddc || '');
   formData.append('cutter', koleksi.cutter || '');
   formData.append('call_number', koleksi.call_number || '');
@@ -555,11 +619,9 @@ const saveKoleksi = async () => {
   if (koleksi.kategori_id) formData.append('kategori_ids[]', koleksi.kategori_id);
   if (koleksi.sub_kategori_id) formData.append('sub_kategori_ids[]', koleksi.sub_kategori_id);
 
-  if (koleksi.content_type === 'pdf' && koleksi.dokumen_pdf) {
-    formData.append('dokumen_pdf', koleksi.dokumen_pdf);
-  }
-  if (koleksi.content_type === 'youtube' && koleksi.youtube_link) {
-    formData.append('youtube_link', koleksi.youtube_link);
+
+  if (koleksi.thumbnail) {
+    formData.append('thumbnail', koleksi.thumbnail);
   }
 
   try {
@@ -610,9 +672,12 @@ const resetForm = () => {
     penerbit: '',
     keywords: '',
     dokumen_pdf: null,
+    thumbnail: null,
     youtube_link: '',
-    content_type: '',
+    content_type: 'pdf',
+    is_active: 1
   });
+  thumbnailPreview.value = null;
   errorList.value = {};
 }
 </script>

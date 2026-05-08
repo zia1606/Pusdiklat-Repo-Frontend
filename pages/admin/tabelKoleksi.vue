@@ -152,6 +152,7 @@
                     class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded-lg cursor-pointer"
                   />
                 </th>
+                <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Thumbnail</th>
                 <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Koleksi & Format</th>
                 <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Kategori & Sub</th>
                 <th class="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
@@ -159,6 +160,7 @@
               </tr>
               <!-- Per-column search row -->
               <tr class="bg-white border-t border-gray-100">
+                <td></td>
                 <td></td>
                 <td class="px-4 py-2">
                   <input
@@ -203,6 +205,21 @@
                   v-model="selectedItems"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded-lg cursor-pointer"
                 />
+              </td>
+              
+              <!-- Kolom Thumbnail -->
+              <td class="px-6 py-5 whitespace-nowrap w-20">
+                <div class="h-16 w-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
+                  <img 
+                    v-if="item.thumbnail" 
+                    :src="item.thumbnail" 
+                    class="h-full w-full object-cover"
+                    alt="thumbnail"
+                  />
+                  <svg v-else class="h-6 w-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
               </td>
               
               <!-- Kolom Judul, Penulis & Format -->
@@ -285,7 +302,8 @@
                       <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                     </svg>
                     <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   </button>
 
@@ -314,7 +332,7 @@
               </td>
             </tr>
             <tr v-if="koleksi.length === 0">
-              <td colspan="5" class="px-6 py-12 text-center">
+              <td colspan="6" class="px-6 py-12 text-center">
                 <div class="flex flex-col items-center justify-center opacity-40">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0l-2.286 6.857a2 2 0 01-1.857 1.143H8.143a2 2 0 01-1.857-1.143L4 13" />

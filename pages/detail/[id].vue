@@ -30,8 +30,8 @@
                 <div class="md:col-span-4 lg:col-span-3">
                   <div class="aspect-[3/4] rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex items-center justify-center">
                     <img
-                      v-if="koleksi.cover_image"
-                      :src="koleksi.cover_image"
+                      v-if="koleksi.thumbnail"
+                      :src="koleksi.thumbnail"
                       :alt="koleksi.judul"
                       class="w-full h-full object-cover"
                     />
@@ -78,44 +78,35 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                       </svg>
-                      <span>{{ koleksi.views ?? 0 }} kali {{ koleksi.youtube_link ? 'dilihat' : 'dibaca' }}</span>
+                      <span>{{ koleksi.views ?? 0 }} kali dibaca</span>
                     </div>
                     <!-- Badge PDF/Video + status -->
                     <div class="h-3 w-px bg-gray-300"></div>
-                    <template v-if="koleksi.youtube_link">
-                      <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                        </svg>
-                        Video
-                      </span>
-                      <span v-if="koleksi.is_active === 1" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-red-100 text-red-600 uppercase tracking-tighter">Active</span>
-                      <span v-else class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 italic">In-Active</span>
-                    </template>
-                    <template v-else-if="koleksi.dokumen_pdf">
+                    <template v-if="koleksi.dokumen_pdf">
                       <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-orange-100 text-orange-800">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                         PDF
                       </span>
-                      <span v-if="koleksi.is_active === 1" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-red-100 text-red-600 uppercase tracking-tighter">Active</span>
-                      <span v-else class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 italic">In-Active</span>
                     </template>
+                    <span v-if="koleksi.is_active === 1" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-red-100 text-red-600 uppercase tracking-tighter">Active</span>
+                    <span v-else class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 italic">In-Active</span>
                   </div>
 
                   <!-- Action Buttons Row -->
                   <div class="flex items-center gap-2 mb-6">
                     <!-- Read Button -->
                     <button
-                      v-if="koleksi.dokumen_pdf && !koleksi.youtube_link"
-                      @click="checkAuthBeforeView(koleksi.id)"
-                      class="flex-1 inline-flex justify-center items-center px-4 py-1.5 bg-blue-700 text-white text-xs font-semibold rounded-lg hover:bg-blue-800 transition-all shadow-sm"
+                      @click="koleksi.dokumen_pdf ? checkAuthBeforeView(koleksi.id) : null"
+                      :disabled="!koleksi.dokumen_pdf"
+                      class="flex-1 inline-flex justify-center items-center px-4 py-1.5 text-white text-xs font-semibold rounded-lg transition-all shadow-sm"
+                      :class="koleksi.dokumen_pdf ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-300 cursor-not-allowed opacity-70'"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      Baca Dokumen
+                      {{ koleksi.dokumen_pdf ? 'Baca Dokumen' : 'File tidak tersedia' }}
                     </button>
 
                     <!-- Favorite Button -->
@@ -152,31 +143,6 @@
                 </div>
               </div>
 
-              <!-- YouTube Video Section -->
-              <div v-if="youtubeData && youtubeData.embed_id" class="mb-10 pt-6 border-t border-gray-100">
-                <div class="relative">
-                  <div v-if="loadingYoutube" class="flex items-center justify-center h-64 md:h-96 bg-gray-100 rounded-lg">
-                    <div class="text-center">
-                      <svg class="animate-spin h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <p class="text-gray-500">Memuat video...</p>
-                    </div>
-                  </div>
-                  <div v-else class="youtube-container rounded-lg overflow-hidden shadow-inner">
-                    <iframe
-                      :src="`https://www.youtube.com/embed/${youtubeData.embed_id}?rel=0&modestbranding=1&enablejsapi=1`"
-                      :title="`Video: ${koleksi.judul}`"
-                      frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowfullscreen
-                      class="youtube-iframe"
-                      @load="onYoutubeLoad"
-                    ></iframe>
-                  </div>
-                </div>
-              </div>
 
               <!-- Metadata Section -->
               <div class="pt-8 border-t border-gray-100">
@@ -567,10 +533,7 @@ const shareLink = ref('');
 const selectedItem = ref(null);
 const relatedDocs = ref([]);
 
-// YouTube specific states
-const youtubeData = ref(null);
-const loadingYoutube = ref(false);
-const youtubeError = ref(null);
+// YouTube specific states (Removed)
 
 // Favorites and Saved items
 const favorites = ref({});
@@ -691,18 +654,6 @@ const getKoleksiDetail = async () => {
     
     const res = await axios.get(`${apiBaseUrl}/api/koleksi/${route.params.id}`);
     koleksi.value = res.data.data;
-    
-    console.log('Collection data received:', koleksi.value);
-    console.log('Has YouTube link:', !!koleksi.value.youtube_link);
-    console.log('YouTube link value:', koleksi.value.youtube_link);
-    
-    // If koleksi has YouTube link, fetch YouTube data
-    if (koleksi.value.youtube_link) {
-      console.log('Collection has YouTube link, fetching YouTube data...');
-      await fetchYoutubeData();
-    } else {
-      console.log('No YouTube link found in collection data');
-    }
   } catch (error) {
     console.error('Gagal mengambil data koleksi:', error);
     errorMessage.value = 'Gagal memuat data koleksi';
@@ -714,88 +665,6 @@ const getKoleksiDetail = async () => {
   }
 };
 
-// Fetch YouTube data
-const fetchYoutubeData = async () => {
-  if (!koleksi.value.youtube_link) {
-    console.log('No YouTube link found in koleksi data');
-    return;
-  }
-  
-  try {
-    loadingYoutube.value = true;
-    youtubeError.value = null;
-    
-    console.log('Fetching YouTube data for collection:', route.params.id);
-    console.log('YouTube link from koleksi:', koleksi.value.youtube_link);
-    
-    const response = await axios.get(`${apiBaseUrl}/api/youtube/embed/${route.params.id}`);
-    
-    console.log('YouTube API Response:', response.data);
-    
-    if (response.data.success) {
-      youtubeData.value = response.data.data;
-      console.log('YouTube data set successfully:', youtubeData.value);
-    } else {
-      throw new Error(response.data.message || 'Failed to get YouTube data');
-    }
-    
-  } catch (error) {
-    console.error('Error fetching YouTube data:', error);
-    console.error('Error response:', error.response?.data);
-    
-    youtubeError.value = 'Gagal memuat video YouTube';
-    
-    // Fallback: Try to extract embed ID directly
-    console.log('Attempting fallback extraction...');
-    const embedId = extractYoutubeId(koleksi.value.youtube_link);
-    console.log('Fallback extracted ID:', embedId);
-    
-    if (embedId) {
-      youtubeData.value = {
-        embed_id: embedId,
-        watch_url: koleksi.value.youtube_link,
-        embed_url: `https://www.youtube.com/embed/${embedId}`
-      };
-      console.log('Fallback YouTube data set:', youtubeData.value);
-      youtubeError.value = null;
-    }
-  } finally {
-    loadingYoutube.value = false;
-  }
-};
-
-// Extract YouTube ID from URL
-const extractYoutubeId = (url) => {
-  if (!url) return null;
-  
-  const patterns = [
-    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
-    /^([a-zA-Z0-9_-]{11})$/
-  ];
-  
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match && match[1]) {
-      return match[1];
-    }
-  }
-  
-  return null;
-};
-
-// Track YouTube view
-const trackYoutubeView = async () => {
-  if (!koleksi.value.id) return;
-  
-  try {
-    await axios.post(`${apiBaseUrl}/api/youtube/track-view/${koleksi.value.id}`);
-    if (koleksi.value.views !== undefined) {
-      koleksi.value.views++;
-    }
-  } catch (error) {
-    console.error('Error tracking YouTube view:', error);
-  }
-};
 
 // Handle YouTube iframe load
 const onYoutubeLoad = () => {

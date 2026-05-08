@@ -1,5 +1,6 @@
 <template>
   <div class="bg-gray-50 min-h-screen">
+    <NuxtLayout>
       <!-- Banner Section -->
       <div class="relative">
         <banner />
@@ -54,7 +55,7 @@
                 >
                   <option value="terbaru">Terbaru</option>
                   <option value="terlama">Terlama</option>
-                  <option value="popular">Populer</option>
+                  <option value="populer">Populer</option>
                 </select>
                 <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -76,16 +77,16 @@
                 :isMobileFilterOpen="isMobileFilterOpen"
                 :kategoriList="kategoriList"
                 :selectedCategories="selectedCategories"
-                :selectedYear="selectedYear"
-                :fixedYears="fixedYears"
                 :customStart="customStart"
                 :customEnd="customEnd"
                 :penerbitType="penerbitType"
+                :selectedStatus="selectedStatus"
+                :isAuthenticated="authStore.isAuthenticated"
                 @update:selectedCategories="selectedCategories = $event"
-                @update:selectedYear="selectedYear = $event"
                 @update:customStart="customStart = $event"
                 @update:customEnd="customEnd = $event"
                 @update:penerbitType="penerbitType = $event"
+                @update:selectedStatus="selectedStatus = $event"
                 @resetFilters="resetFilters"
               />
             </div>
@@ -96,16 +97,16 @@
                 :year-range="yearRange"
                 :kategoriList="kategoriList"
                 :selectedCategories="selectedCategories"
-                :selectedYear="selectedYear"
-                :fixedYears="fixedYears"
                 :customStart="customStart"
                 :customEnd="customEnd"
                 :penerbitType="penerbitType"
+                :selectedStatus="selectedStatus"
+                :isAuthenticated="authStore.isAuthenticated"
                 @update:selectedCategories="selectedCategories = $event"
-                @update:selectedYear="selectedYear = $event"
                 @update:customStart="customStart = $event"
                 @update:customEnd="customEnd = $event"
                 @update:penerbitType="penerbitType = $event"
+                @update:selectedStatus="selectedStatus = $event"
                 @resetFilters="resetFilters"
               />
             </div>
@@ -185,8 +186,8 @@
                     <!-- Thumbnail Kiri -->
                     <div class="flex-shrink-0 w-28 sm:w-36 bg-gray-100 relative">
                       <img
-                        v-if="item.cover_image"
-                        :src="item.cover_image"
+                        v-if="item.thumbnail"
+                        :src="item.thumbnail"
                         :alt="item.judul"
                         class="w-full h-full object-cover"
                         style="min-height: 160px;"
@@ -240,30 +241,20 @@
                               <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
-                            <span>{{ item.views ?? 0 }} kali {{ item.youtube_link ? 'dilihat' : 'dibaca' }}</span>
+                            <span>{{ item.views ?? 0 }} kali dibaca</span>
                           </div>
                           <!-- Badge PDF/Video + status -->
                           <div class="h-3 w-px bg-gray-300"></div>
-                          <template v-if="item.youtube_link">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                              </svg>
-                              Video
-                            </span>
-                            <span v-if="item.is_active === 1" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-red-100 text-red-600 uppercase tracking-tighter">Active</span>
-                            <span v-else class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 italic">In-Active</span>
-                          </template>
-                          <template v-else-if="item.dokumen_pdf">
+                          <template v-if="item.dokumen_pdf">
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                               </svg>
                               PDF
                             </span>
-                            <span v-if="item.is_active === 1" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-red-100 text-red-600 uppercase tracking-tighter">Active</span>
-                            <span v-else class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 italic">In-Active</span>
                           </template>
+                          <span v-if="item.is_active === 1" class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-red-100 text-red-600 uppercase tracking-tighter">Active</span>
+                          <span v-else class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 italic">In-Active</span>
                         </div>
 
                         <!-- Ringkasan -->
@@ -475,6 +466,7 @@
       </div>
     </div>
 
+    </NuxtLayout>
   </div>
 </template>
 
@@ -501,9 +493,6 @@
   // State
   const searchQuery = ref('');
   const isMobileFilterOpen = ref(false);
-  const currentYear = new Date().getFullYear();
-  const fixedYears = [currentYear, currentYear - 1, currentYear - 5];
-  const selectedYear = ref(null);
   const selectedCategories = ref([]);
 
   // Data Koleksi
@@ -530,6 +519,7 @@
   const hasDataLoaded = ref(false);
   const favorites = ref({});
   const penerbitType = ref('');
+  const selectedStatus = ref('');
   const currentPage = ref(1);
   const perPage = ref(10);
   const total = ref(0);
@@ -633,10 +623,10 @@
       const params = {
         search: finalSearchQuery,
         kategori: selectedCategories.value,
-        tahun: selectedYear.value,
         penerbit_type: penerbitType.value,
-        customStart: customStart.value,
-        customEnd: customEnd.value,
+        customStart: customStart.value?.toString().length === 4 ? customStart.value : null,
+        customEnd: customEnd.value?.toString().length === 4 ? customEnd.value : null,
+        status: !authStore.isAuthenticated ? '1' : selectedStatus.value,
         sort_by: sortBy.value,
         page: currentPage.value,
         per_page: perPage.value,
@@ -712,10 +702,10 @@
 
   const resetFilters = () => {
     selectedCategories.value = [];
-    selectedYear.value = null;
     customStart.value = yearRange.value.min;
     customEnd.value = yearRange.value.max;
     penerbitType.value = '';
+    selectedStatus.value = '';
     sortBy.value = 'terbaru';
     currentPage.value = 1;
     if (isInitialized.value) {
@@ -729,10 +719,10 @@
   // Modifikasi fungsi resetFilters untuk juga menghapus search query
   const resetFilters2 = () => {
     selectedCategories.value = [];
-    selectedYear.value = null;
     customStart.value = yearRange.value.min;
     customEnd.value = yearRange.value.max;
     penerbitType.value = '';
+    selectedStatus.value = '';
     sortBy.value = 'terbaru';
     currentPage.value = 1;
     
@@ -1017,12 +1007,16 @@
       favorites.value = {};
     }
   });
-  // Watch untuk filters
-  watch([selectedCategories, selectedYear, penerbitType, customStart, customEnd, sortBy], () => {
+  const debouncedFilter = debounce(() => {
     if (!isInitialized.value) return;
-    console.log('🔧 Filter changed');
+    console.log('🔧 Filter changed (debounced)');
     currentPage.value = 1;
-    getKoleksi(); // Menggunakan searchQuery.value yang sudah ada
+    getKoleksi();
+  }, 500);
+
+  // Watch untuk filters
+  watch([selectedCategories, penerbitType, selectedStatus, customStart, customEnd, sortBy], () => {
+    debouncedFilter();
   }, { deep: true });
   </script>
 

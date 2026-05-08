@@ -1,5 +1,6 @@
 <template>
     <div class="bg-gray-50 min-h-screen">
+      <NuxtLayout>
         <!-- Banner Section -->
         <div class="relative">
           <banner />
@@ -167,6 +168,7 @@
             </div>
           </section>
         </main>
+      </NuxtLayout>
     </div>
 </template>
   
